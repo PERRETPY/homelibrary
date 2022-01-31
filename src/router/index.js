@@ -10,8 +10,9 @@ const routes = [
         component: Home
     },
     {
-        path: '/details',
+        path: '/details/:id',
         name: 'Details',
+        props: true,
         component: Details
     },
     {
