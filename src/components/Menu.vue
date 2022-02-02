@@ -27,6 +27,7 @@
       <div class="navbar-start">
         <router-link class="navbar-item" to="/"> Home </router-link>
         <router-link class="navbar-item" to="/library"> Library </router-link>
+        <router-link class="navbar-item" to="/search"> Search </router-link>
 
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">

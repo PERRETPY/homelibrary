@@ -1,5 +1,5 @@
 <template>
-
+  <p>Hello from Search component</p>
 </template>
 
 <script>
