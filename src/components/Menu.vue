@@ -59,7 +59,12 @@
 
 <script>
 export default {
-  name: "Menu.vue"
+  name: "Menu.vue",
+  data() {
+    return {
+      mobileMenuActive: false,
+    };
+  }
 }
 </script>
 
