@@ -1,0 +1,6 @@
+{
+  "appId": "org.miage.homelibrary",
+  "appName": "homelibrary",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
