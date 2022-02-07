@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { BarcodeScanner, SupportedFormat } from '@capacitor-community/barcode-scanner';
 
 export default {
   name: "Scan",
@@ -18,18 +18,26 @@ export default {
   },
   methods: {
     async startScan() {
-      const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
+      const result = await BarcodeScanner.startScan({ targetedFormats: [SupportedFormat.EAN_13] }); // start scanning and wait for a result
 
       // if the result has content
       if (result.hasContent) {
         console.log(result.content); // log the raw scanned content
-        await this.$router.replace('/details/'+result.content)
+        if (this.checkBarCode(result.content)) {
+          await this.$router.replace('/details/'+result.content)
+        } else {
+          alert("Le code barre n'est pas reconnu !")
+        }
       }
     },
     stopScan() {
       BarcodeScanner.showBackground();
       BarcodeScanner.stopScan();
     },
+    checkBarCode(barcode) {
+      const regex = /97[89][0-9]{10}/
+      return regex.test(barcode)
+    }
   },
   mounted() {
     this.startScan();
