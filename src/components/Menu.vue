@@ -72,6 +72,7 @@ export default {
 <style scoped>
 .navbar {
   height: 70px;
+  margin: 0;
 }
 
 .router-link-active {
