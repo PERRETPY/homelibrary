@@ -2,6 +2,8 @@ import Home from "../components/Home";
 import Details from "../components/Details";
 import Library from "../components/Library";
 import Search from "../components/Search";
+import About from "../components/About";
+import NotFound from "../components/NotFound";
 
 import {createRouter, createWebHistory} from "vue-router";
 
@@ -26,6 +28,16 @@ const routes = [
         path: '/search',
         name: 'Search',
         component: Search
+    },
+    {
+        path: '/about',
+        name: 'About',
+        component: About
+    },
+    {
+        path: '*',
+        name: 'NotFound',
+        component: NotFound
     }
 ]
 const router = createRouter({
