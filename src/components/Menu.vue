@@ -23,7 +23,7 @@
       </a>
     </div>
 
-    <div class="navbar-menu" :class="{ 'is-active': mobileMenuActive }">
+    <div class="navbar-menu" :class="{ 'is-active': mobileMenuActive }" @click="mobileMenuActive = !mobileMenuActive">
       <div class="navbar-start">
         <router-link class="navbar-item" to="/"> Home </router-link>
         <router-link class="navbar-item" to="/library"> Library </router-link>
