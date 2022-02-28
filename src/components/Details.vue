@@ -13,6 +13,11 @@
           {{ tag }}
           <button class="delete is-small" @click="onDeleteTag(tags.indexOf(tag))"></button>
         </span>
+        <div>
+          <input class="input" type="text" placeholder="tag" v-model="addTag">
+          <button class="button" @click="onAddTag()">Add</button>
+        </div>
+
 
         <h3>Description : </h3>
         <p class="description" v-if="book.description" v-html="book.description"/>
@@ -42,6 +47,16 @@
               </div>
             </div>
           </div>
+        </div>
+        <div>
+          Ce livre est
+          <button
+              class="button is-rounded"
+              :class="{ 'is-primary': isAvailable, 'is-danger': !isAvailable }"
+              @click="onAvailableClick()">
+            <span v-if="isAvailable">Disponnible</span>
+            <span v-else>Indisponnible</span>
+          </button>
         </div>
         <div class="field ">
           <div class="field-body">
@@ -85,8 +100,9 @@ export default {
       status: "over",
       selfRate: 4,
       review: "",
-      available: false,
+      isAvailable: false,
       note: "prêté au voisin",
+      addTag: ""
     }
   },
   mounted() {
@@ -112,6 +128,13 @@ export default {
     },
     onDeleteTag: function(key) {
       this.tags.splice(key, 1)
+    },
+    onAddTag: function() {
+      this.tags.push(this.addTag)
+      this.addTag = ""
+    },
+    onAvailableClick: function() {
+      this.isAvailable = !this.isAvailable
     }
   }
 }
