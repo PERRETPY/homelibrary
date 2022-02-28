@@ -11,7 +11,7 @@
         <h3>Date de parution : {{ book.publishedDate }}</h3>
         <span class="tag is-info" v-for="tag in tags" :key="tags.indexOf(tag)">
           {{ tag }}
-          <button class="delete is-small"></button>
+          <button class="delete is-small" @click="onDeleteTag(tags.indexOf(tag))"></button>
         </span>
 
         <h3>Description : </h3>
@@ -109,6 +109,9 @@ export default {
   methods: {
     onValidateForm: function () {
       console.log(this.rate)
+    },
+    onDeleteTag: function(key) {
+      this.tags.splice(key, 1)
     }
   }
 }
