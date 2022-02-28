@@ -1,8 +1,9 @@
 <template>
   <div class="container">
     <div class="columns">
-      <div class="column is-half-tablet">
-        <img v-if="book && book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
+      <div class="column is-half-tablet" v-if="book">
+        <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
+        <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
       </div>
       <div class="column is-half-tablet">
         <h2>Titre : <span v-if="book">{{ book.title }}</span></h2>
@@ -15,7 +16,18 @@
         <h3>Description : </h3>
         <p v-if="book">{{ book.description }}</p>
         
-        <star-rating v-model:rating="rate" :increment="0.5"/>
+        <star-rating v-model:rating="selfRate" :increment="0.5"/>
+        <div v-if="book">
+          <div v-if="book.ratingsCount && book.ratingsCount > 0">
+            <p>{{ book.ratingsCount }} avis </p>
+            <star-rating v-model:rating="book.averageRating" :star-size="20" :round-start-rating="false" :read-only="true"></star-rating>
+          </div>
+          <div v-else>
+            <p>pas d'avis pour le moment </p>
+            <star-rating v-model:rating="book.averageRating" :star-size="20" :round-start-rating="false" :read-only="true"></star-rating>
+          </div>
+        </div>
+
 
         <div class="field">
           <label class="label">Avis</label>
@@ -68,7 +80,7 @@ export default {
         "Autobiographie"
       ],
       status: "over",
-      rate: 4,
+      selfRate: 4,
       review: "",
       available: false,
       note: "prêté au voisin",
