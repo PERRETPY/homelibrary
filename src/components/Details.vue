@@ -174,6 +174,9 @@ export default {
         this.status = `Books ${book.isbn}
           successfully added.`;
 
+        this.loadBookFromDatabase();
+        this.isInDatabase = true;
+
       } catch (error) {
         this.status = `Failed to add
           ${book.isbn}: ${error}`;
