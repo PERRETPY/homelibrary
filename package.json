@@ -12,10 +12,12 @@
     "@capacitor/android": "^3.4.0",
     "@capacitor/cli": "^3.4.0",
     "@capacitor/core": "^3.4.0",
+    "@vueuse/rxjs": "^7.7.0",
     "axios": "^0.25.0",
     "bulma": "^0.9.3",
     "core-js": "^3.6.5",
     "dexie": "^3.2.1",
+    "rxjs": "^7.5.4",
     "vue": "^3.0.0",
     "vue-router": "^4.0.12",
     "vue-star-rating": "^2.1.0"
