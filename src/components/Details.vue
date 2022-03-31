@@ -1,5 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!loading">
+    <button class="button" @click="resetDatabase()">Reset database</button>
+    <button class="button" @click="getAllBooksFromDatabase()">getAll from database</button>
     <div class="columns">
       <div class="column is-half-tablet" v-if="book">
         <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
@@ -7,24 +9,25 @@
       </div>
       <div class="column is-half-tablet details" v-if="book">
         <h2>Titre : {{ book.title }}</h2>
-        <h3>Auteur : {{ book.authors.join(', ') }}</h3>
+        <h3 v-if="book.authors">Auteur : {{ book.authors.join(' ,') }}</h3>
         <h3>Date de parution : {{ book.publishedDate }}</h3>
-        <span class="tag is-info" v-for="tag in tags" :key="tags.indexOf(tag)">
+        <div v-if="isInDatabase && book.tags">
+          <span class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
           {{ tag }}
-          <button class="delete is-small" @click="onDeleteTag(tags.indexOf(tag))"></button>
+          <button class="delete is-small" @click="onDeleteTag(book.tags.indexOf(tag))"></button>
         </span>
-        <div>
-          <input class="input" type="text" placeholder="tag" v-model="addTag">
-          <button class="button" @click="onAddTag()">Add</button>
+          <div>
+            <input class="input" type="text" placeholder="tag" v-model="addTag">
+            <button class="button" @click="onAddTag()">Add</button>
+          </div>
         </div>
-
 
         <h3>Description : </h3>
         <p class="description" v-if="book.description" v-html="book.description"/>
         <p v-else> pas de description pour le moment</p>
 
-        
-        <star-rating v-model:rating="selfRate" :increment="0.5"/>
+
+        <star-rating v-if="isInDatabase" v-model:rating="book.selfRate" :increment="0.5"/>
         <div v-if="book">
           <div v-if="book.ratingsCount && book.ratingsCount > 0">
             <p>{{ book.ratingsCount }} avis </p>
@@ -37,13 +40,13 @@
         </div>
 
 
-        <div class="field">
+        <div class="field" v-if="isInDatabase">
           <label class="label">Avis</label>
           <div class="field-body">
             <div class="field">
               <div class="control">
-                <textarea v-if="review" class="textarea" :value="review"></textarea>
-                <textarea v-else class="textarea" placeholder="Comment avez-vous trouvé ce livre ?"></textarea>
+                <textarea v-if="book.review" class="textarea" v-model="book.review"></textarea>
+                <textarea v-else class="textarea" placeholder="Comment avez-vous trouvé ce livre ?" v-model="book.review"></textarea>
               </div>
             </div>
           </div>
@@ -51,10 +54,11 @@
         <div>
           Ce livre est
           <button
+              v-if="isInDatabase"
               class="button is-rounded"
-              :class="{ 'is-primary': isAvailable, 'is-danger': !isAvailable }"
+              :class="{ 'is-primary': book.available, 'is-danger': !book.available }"
               @click="onAvailableClick()">
-            <span v-if="isAvailable">Disponnible</span>
+            <span v-if="book.available">Disponnible</span>
             <span v-else>Indisponnible</span>
           </button>
         </div>
@@ -65,7 +69,7 @@
                 <button class="button is-danger">
                   Annuler
                 </button>
-                <button @click="onValidateForm" class="button is-primary">
+                <button @click="onSave()" class="button is-primary">
                   Sauvegarder
                 </button>
               </div>
@@ -81,6 +85,8 @@
 import StarRating from "vue-star-rating";
 import axios from "axios";
 
+import { db } from "../db";
+
 export default {
   name: "Details.vue",
   props: {
@@ -91,50 +97,174 @@ export default {
   },
   data() {
     return {
-      book: null,
-
-      tags: [
-        "Sport",
-        "Autobiographie"
-      ],
+      book: {},
+      loading: false,
       status: "over",
-      selfRate: 4,
-      review: "",
-      isAvailable: false,
-      note: "prêté au voisin",
-      addTag: ""
+      addTag: "",
+      isInDatabase: false
     }
   },
+  setup() {
+    return {
+      db,
+    };
+  },
   mounted() {
-    axios
-        .get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+this.id)
-        .then((response) => {
-          axios
-            .get(response.data.items[0].selfLink)
-            .then((responseBook) => {
-              this.book = responseBook.data.volumeInfo
-            })
-            .catch((error) => {
-              console.log(error);
-            })
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    this.loading = true;
+    this.existByIsbn(this.id).then((exist) => {
+      this.isInDatabase = exist;
+      this.loadBook();
+    });
   },
   methods: {
-    onValidateForm: function () {
-      console.log(this.rate)
+    resetDatabase: function() {
+      this.db.books.clear();
     },
+
+    async getAllBooksFromDatabase() {
+      console.log(await this.db.books.toArray());
+    },
+
+    onSave: function() {
+      console.log("onSave()");
+      if(this.isInDatabase) {
+        console.log("updateBook()");
+        this.updateBook(this.id, this.book);
+      }else {
+        console.log("addBookToDatabase()");
+        this.addBookToDatabase(this.book);
+      }
+    },
+
+    addBookToDatabase: function(book) {
+      try {
+        console.log("On adding book : " + book.isbn);
+
+        let newBook = {};
+
+        newBook.isbn = this.id;
+        newBook.title = book.title;
+        newBook.authors = [];
+        newBook.publishedDate = book.publishedDate;
+        newBook.description = book.description;
+        newBook.tags = [];
+        newBook.ratingsCount = book.ratingsCount;
+        newBook.averageRating = book.averageRating;
+        newBook.rate = book.rate;
+        newBook.selfRate = undefined;
+        newBook.review = undefined;
+        newBook.available = true;
+
+        book.authors.forEach((author) => {
+          newBook.authors.push(author);
+        });
+
+        db.books.add(newBook).then(
+            (added) => {
+              if(added){
+                console.log("Book add");
+              }else {
+                console.log("Book not add");
+              }
+          }
+        )
+
+        console.log("book add");
+
+        this.status = `Books ${book.isbn}
+          successfully added.`;
+
+      } catch (error) {
+        this.status = `Failed to add
+          ${book.isbn}: ${error}`;
+      }
+    },
+
+    updateBook: function(id, book) {
+      let updateBook = {};
+
+      updateBook.isbn = this.id;
+      updateBook.tags = [];
+      updateBook.selfRate = book.selfRate;
+      updateBook.review = book.review;
+      updateBook.available = book.available;
+
+      book.tags.forEach((tag) => {
+        updateBook.tags.push(tag);
+      });
+
+      console.log('Available : ' + updateBook.available);
+
+      db.books.where("isbn").equals(id).modify(updateBook).then(
+        (updated) => {
+              console.log(updated);
+      });
+    },
+
+    async existByIsbn(id) {
+      console.log("Is " + id + " exist ?");
+      console.log(!!(await this.db.books.get({isbn: id})));
+      return !!(await this.db.books.get({isbn: id}));
+    },
+
     onDeleteTag: function(key) {
-      this.tags.splice(key, 1)
+      this.book.tags.splice(key, 1)
     },
+
     onAddTag: function() {
-      this.tags.push(this.addTag)
+      console.log(this.tags);
+      this.book.tags.push(this.addTag);
       this.addTag = ""
     },
+
     onAvailableClick: function() {
-      this.isAvailable = !this.isAvailable
+      this.book.available = !this.book.available;
+    },
+
+    loadBook: function() {
+      if(this.isInDatabase) {
+        this.loadBookFromDatabase();
+      }else {
+        this.loadBookFromServer();
+      }
+    },
+
+    loadBookFromDatabase: function () {
+      console.log("loadBookFromDatabase");
+      this.db.books.get({isbn: this.id}).then(
+          (book) => {
+            this.book = book;
+            console.log('Available load : ' + this.book.available);
+            this.loading = false;
+          },
+          (error) => {
+            console.log(error);
+            this.loadBookFromServer();
+          }
+      )
+    },
+
+    loadBookFromServer: function() {
+      console.log('get book from server');
+      axios
+          .get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+this.id)
+          .then((response) => {
+            axios
+                .get(response.data.items[0].selfLink)
+                .then((responseBook) => {
+                  const book = responseBook.data.volumeInfo;
+
+                  this.book = book;
+
+                  this.loading = false;
+                })
+                .catch((error) => {
+                  console.log(error);
+                })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
     }
   }
 }
