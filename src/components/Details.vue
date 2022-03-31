@@ -66,11 +66,12 @@
           <div class="field-body">
             <div class="field">
               <div class="control">
-                <button class="button is-danger">
-                  Annuler
+                <button v-if="isInDatabase" @click="onDelete()" class="button is-danger">
+                  Supprimer
                 </button>
                 <button @click="onSave()" class="button is-primary">
-                  Sauvegarder
+                  <span v-if="isInDatabase">Sauvegarder</span>
+                  <span v-else>Ajouter</span>
                 </button>
               </div>
             </div>
@@ -134,6 +135,21 @@ export default {
         console.log("addBookToDatabase()");
         this.addBookToDatabase(this.book);
       }
+    },
+
+    onDelete: function() {
+      console.log('onDelete : ' + this.book.id);
+      this.db.books.where("isbn").equals(this.id).delete().then(
+          (deleted) => {
+            if(deleted) {
+              console.log("Successfully delete");
+              this.isInDatabase = false;
+              this.loadBookFromServer();
+            }else {
+              console.log("Error on delete");
+            }
+          }
+      );
     },
 
     addBookToDatabase: function(book) {
