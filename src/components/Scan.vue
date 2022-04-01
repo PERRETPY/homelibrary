@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <h2>Scannez un code barre de livre !</h2>
+    <h2>Scannez le code barre d'un livre !</h2>
   </div>
   <div></div>
 </template>

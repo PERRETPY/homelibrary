@@ -55,8 +55,5 @@ export default {
 </script>
 
 <style scoped>
-  .test {
-    background-color: red;
-  }
 
 </style>
