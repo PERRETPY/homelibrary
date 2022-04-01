@@ -62,6 +62,16 @@
             <span v-else>Indisponnible</span>
           </button>
         </div>
+        <div>
+          <button
+              v-if="isInDatabase"
+              class="button is-rounded"
+              :class="{ 'is-primary': book.read, 'is-danger': !book.read }"
+              @click="onReadClick()">
+            <span v-if="book.read">Lu</span>
+            <span v-else>Non lu</span>
+          </button>
+        </div>
         <div class="field ">
           <div class="field-body">
             <div class="field">
@@ -170,6 +180,7 @@ export default {
         newBook.selfRate = undefined;
         newBook.review = undefined;
         newBook.available = true;
+        newBook.read = false;
 
         book.authors.forEach((author) => {
           newBook.authors.push(author);
@@ -207,6 +218,7 @@ export default {
       updateBook.selfRate = book.selfRate;
       updateBook.review = book.review;
       updateBook.available = book.available;
+      updateBook.read = book.read;
 
       book.tags.forEach((tag) => {
         updateBook.tags.push(tag);
@@ -238,6 +250,10 @@ export default {
 
     onAvailableClick: function() {
       this.book.available = !this.book.available;
+    },
+
+    onReadClick: function() {
+      this.book.read = !this.book.read;
     },
 
     loadBook: function() {
