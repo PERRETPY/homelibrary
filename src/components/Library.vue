@@ -1,6 +1,13 @@
 <template>
-  <button @click="getBookForTagTest()">getBookForTagTest</button>
-  <button @click="getAllTags()">getAllTags</button>
+  <button @click="resetSearch()">Reset</button>
+
+  <form>
+    <label for="search">Recherche</label>
+    <input type="text" id="search" v-model="searchInput">
+  </form>
+
+  <button @click="search()">Go</button>
+
 
   <div v-if="allTags && allTags.length > 0">
     <label>Search by tag</label>
@@ -9,6 +16,8 @@
       <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
     </select>
   </div>
+
+
 
   <div class="columns is-multiline">
     <div class="column is-half-tablet is-one-third-desktop is-one-quarter-widescreen"
@@ -31,7 +40,8 @@ export default {
       booksList: [],
       loading: false,
       allTags: [],
-      searchTag: ""
+      searchTag: "all",
+      searchInput: ""
     }
   },
   setup() {
@@ -45,6 +55,12 @@ export default {
     this.getAllBooksFromDatabase();
   },
   methods: {
+    resetSearch: function() {
+      this.searchTag = 'all';
+      this.searchInput = '';
+      this.getAllBooksFromDatabase();
+    },
+
     getAllBooksFromDatabase: function() {
       this.db.books.toArray().then(
           (books) => {
@@ -103,7 +119,53 @@ export default {
       }else {
         this.getBookFromTag(selectValue);
       }
-    }
+    },
+
+    search: function() {
+      const search = this.searchInput;
+      console.log("onSearch : " + search);
+      this.db.books.filter(
+          (book) => {
+            if(book.tags.includes(search)) {
+              console.log(book + " matches the search with tags");
+              return true;
+            }
+            if(book.authors.includes(search)) {
+              console.log(book + " matches the search with authors");
+              return true;
+            }
+            if(book.title.includes(search)) {
+              console.log(book + " matches the search with title");
+              return true;
+            }
+          }
+      ).toArray().then(
+          (response) => {
+            this.booksList = response;
+          }
+      );
+    },
+
+    filterBookArrayByRead: function(isRead) {
+      this.booksList.forEach(
+          (book, index) => {
+            if(book.read !== isRead) {
+              this.booksList.splice(index, 1);
+            }
+          }
+      );
+    },
+
+    filterBookArrayByAvailable: function(isAvailable) {
+      this.booksList.forEach(
+          (book, index) => {
+            if(book.available !== isAvailable) {
+              this.booksList.splice(index, 1);
+            }
+        }
+      );
+    },
+
   }
 }
 </script>
