@@ -1,5 +1,6 @@
 <template>
   <Menu/>
+  <toast></toast>
   <div>
     <router-view />
   </div>
@@ -7,11 +8,13 @@
 
 <script>
 import Menu from "./components/Menu";
+import Toast from "./components/Toast";
 
 export default {
   name: 'App',
   components: {
-    Menu
+    Menu,
+    Toast
   }
 }
 </script>
