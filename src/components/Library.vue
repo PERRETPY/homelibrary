@@ -1,4 +1,5 @@
 <template>
+  <toast></toast>
   <button @click="resetSearch()">Reset</button>
 
   <form>
@@ -31,17 +32,20 @@
 <script>
 import {db} from "../db";
 import BookPreview from "./BookPreview";
+import Toast from "./Toast";
+import ToastService from "../services/toastService";
 
 export default {
   name: "Library.vue",
-  components: {BookPreview},
+  components: {Toast, BookPreview},
   data() {
     return {
       booksList: [],
       loading: false,
       allTags: [],
       searchTag: "all",
-      searchInput: ""
+      searchInput: "",
+      toastService: {}
     }
   },
   setup() {
@@ -50,6 +54,7 @@ export default {
     };
   },
   mounted() {
+    this.toastService = ToastService.getInstance();
     this.loading = true;
     this.getAllTags();
     this.getAllBooksFromDatabase();
