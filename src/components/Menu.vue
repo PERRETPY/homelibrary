@@ -75,10 +75,18 @@ export default {
   margin: 0;
 }
 
+.navbar-item:hover {
+  color: #A29C43;
+}
+
+.navbar-link:hover {
+  color: #A29C43;
+}
+
 .router-link-active {
   font-weight: bold;
   text-decoration: underline;
-  text-decoration-color: #8D0000;
+  text-decoration-color: #A29C43;
 }
 
 </style>
