@@ -1,18 +1,49 @@
 <template>
-  <toast></toast>
-  <button @click="resetSearch()">Reset</button>
+  <div class="field has-addons">
+    <div class="control">
+      <input class="input" type="search" placeholder="Search by keyWord" v-model="searchInput">
 
-  <form>
-    <label for="search">Recherche</label>
-    <input type="text" id="search" v-model="searchInput">
-  </form>
+    </div>
+    <div class="control">
+      <a class="button is-info" @click="onSearch()">
+        Search
+      </a>
+    </div>
+  </div>
 
-  <button @click="search()">Go</button>
+  <div class="control">
+    <label class="radio">
+      <input type="radio" name="read" v-model="readInput" :value="false" @change="onSearch()">
+      Non lu
+    </label>
+    <label class="radio">
+      <input type="radio" name="read" v-model="readInput" :value="undefined" @change="onSearch()" checked>
+      Tous
+    </label>
+    <label class="radio">
+      <input type="radio" name="read"  v-model="readInput" :value="true" @change="onSearch()">
+      Lu
+    </label>
+  </div>
 
+  <div class="control">
+    <label class="radio">
+      <input type="radio" name="available" v-model="availableInput" :value="false" @change="onSearch()">
+      Indisponible
+    </label>
+    <label class="radio">
+      <input type="radio" name="available" v-model="availableInput" :value="undefined" @change="onSearch()" checked>
+      Tous
+    </label>
+    <label class="radio">
+      <input type="radio" name="available"  v-model="availableInput" :value="true" @change="onSearch()">
+      Disponnible
+    </label>
+  </div>
 
   <div v-if="allTags && allTags.length > 0">
     <label>Search by tag</label>
-    <select @change="onChange($event)" v-model="searchTag">
+    <select v-model="searchTag" @change="onSearch()">
       <option selected value="all"> Tous </option>
       <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
     </select>
@@ -32,12 +63,11 @@
 <script>
 import {db} from "../db";
 import BookPreview from "./BookPreview";
-import Toast from "./Toast";
 import ToastService from "../services/toastService";
 
 export default {
   name: "Library.vue",
-  components: {Toast, BookPreview},
+  components: {BookPreview},
   data() {
     return {
       booksList: [],
@@ -45,6 +75,8 @@ export default {
       allTags: [],
       searchTag: "all",
       searchInput: "",
+      readInput: undefined,
+      availableInput: undefined,
       toastService: {}
     }
   },
@@ -57,7 +89,7 @@ export default {
     this.toastService = ToastService.getInstance();
     this.loading = true;
     this.getAllTags();
-    this.getAllBooksFromDatabase();
+    this.onSearch();
   },
   methods: {
     resetSearch: function() {
@@ -66,33 +98,11 @@ export default {
       this.getAllBooksFromDatabase();
     },
 
-    getAllBooksFromDatabase: function() {
-      this.db.books.toArray().then(
-          (books) => {
-            this.booksList = books;
-            this.loading = false;
-          }
-      )
-    },
-
     showBooksDetails(bookISBN) {
       this.$router.push({
         name: "Details",
         params: { id: bookISBN },
       });
-    },
-
-    getBookFromTag: function(tag) {
-      this.db.books.filter(
-        (book) => {
-          console.log(book.tags);
-          return book.tags.includes(tag);
-        }
-      ).toArray().then(
-          (response) => {
-            this.booksList = response;
-          }
-      );
     },
 
     async getAllTags() {
@@ -117,57 +127,34 @@ export default {
       return self.indexOf(value) === index;
     },
 
-    onChange(event) {
-      const selectValue = event.target.value;
-      if(selectValue === "all") {
-        this.getAllBooksFromDatabase();
-      }else {
-        this.getBookFromTag(selectValue);
-      }
-    },
+    onSearch: function() {
+      const searchKeyWord = this.searchInput;
+      const tag = this.searchTag;
+      const available = this.availableInput;
+      const read = this.readInput;
 
-    search: function() {
-      const search = this.searchInput;
-      console.log("onSearch : " + search);
-      this.db.books.filter(
+      console.log("onSearch : " + searchKeyWord);
+      this.db.books.orderBy("title").filter(
           (book) => {
-            if(book.tags.includes(search)) {
-              console.log(book + " matches the search with tags");
-              return true;
-            }
-            if(book.authors.includes(search)) {
-              console.log(book + " matches the search with authors");
-              return true;
-            }
-            if(book.title.includes(search)) {
-              console.log(book + " matches the search with title");
+            if((searchKeyWord === "" ? true : (
+                book.tags.includes(searchKeyWord)
+                || book.authors.includes(searchKeyWord)
+                || book.title.includes(searchKeyWord))
+                )
+                && (available === undefined ? true : book.available === available)
+                && (read === undefined ? true : book.read === read)
+                && (tag === "all" ? true : book.tags.includes(tag))
+            ) {
               return true;
             }
           }
       ).toArray().then(
           (response) => {
             this.booksList = response;
-          }
-      );
-    },
-
-    filterBookArrayByRead: function(isRead) {
-      this.booksList.forEach(
-          (book, index) => {
-            if(book.read !== isRead) {
-              this.booksList.splice(index, 1);
+            if(response.length === 0) {
+              this.toastService.show("Aucun livre trouvé", "is-warning")
             }
           }
-      );
-    },
-
-    filterBookArrayByAvailable: function(isAvailable) {
-      this.booksList.forEach(
-          (book, index) => {
-            if(book.available !== isAvailable) {
-              this.booksList.splice(index, 1);
-            }
-        }
       );
     },
 
