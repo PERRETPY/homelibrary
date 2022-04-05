@@ -2,5 +2,9 @@
 	{
 		"pkg": "@capacitor-community/barcode-scanner",
 		"classpath": "com.dutchconcepts.capacitor.barcodescanner.BarcodeScanner"
+	},
+	{
+		"pkg": "@capacitor/share",
+		"classpath": "com.capacitorjs.plugins.share.SharePlugin"
 	}
 ]

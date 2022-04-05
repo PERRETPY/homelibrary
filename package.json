@@ -12,6 +12,7 @@
     "@capacitor/android": "^3.4.0",
     "@capacitor/cli": "^3.4.0",
     "@capacitor/core": "^3.4.0",
+    "@capacitor/share": "^1.1.2",
     "@vueuse/rxjs": "^7.7.0",
     "axios": "^0.25.0",
     "bulma": "^0.9.3",
