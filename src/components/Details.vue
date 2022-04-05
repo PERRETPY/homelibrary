@@ -15,7 +15,11 @@
           <button class="delete is-small" @click="onDeleteTag(book.tags.indexOf(tag))"></button>
         </span>
           <div>
-            <input class="input" type="text" placeholder="tag" v-model="addTag">
+            <input class="input" type="text" placeholder="tag" list="tagList" v-model="addTag">
+            <datalist id="tagList">
+              <option v-for="tag in allOtherTags" :key="tag">{{tag}}</option>
+            </datalist>
+
             <button class="button" @click="onAddTag()">Add</button>
           </div>
         </div>
@@ -117,6 +121,7 @@ export default {
       loading: false,
       status: "over",
       addTag: "",
+      allOtherTags: [],
       isInDatabase: false,
       isNativePlatform: Capacitor.isNativePlatform(),
       storageService: {}
@@ -132,8 +137,8 @@ export default {
     this.storageService.existByISBN(this.id).then((exist) => {
       this.isInDatabase = exist;
       this.loadBook();
+      this.getAllOtherTags();
     });
-
   },
   methods: {
     onSave: function() {
@@ -145,6 +150,30 @@ export default {
         console.log("addBookToDatabase()");
         this.addBookToDatabase(this.book);
       }
+    },
+
+    async getAllOtherTags() {
+      let allTags = [];
+
+      const allBook = await this.storageService.getAllBooks();
+      allBook.forEach(
+          (book) => {
+            book.tags.forEach(
+                (tag) => {
+                  if(!this.book.tags.includes(tag)) {
+                    allTags.push(tag);
+                  }
+                }
+            )
+          }
+      );
+
+      allTags = allTags.filter(this.onlyUnique);
+      this.allOtherTags = allTags;
+    },
+
+    onlyUnique: function(value, index, self) {
+      return self.indexOf(value) === index;
     },
 
     onDelete: function() {
@@ -233,13 +262,15 @@ export default {
     },
 
     onDeleteTag: function(key) {
-      this.book.tags.splice(key, 1)
+      this.book.tags.splice(key, 1);
+      this.getAllOtherTags();
     },
 
     onAddTag: function() {
       console.log(this.tags);
       this.book.tags.push(this.addTag);
-      this.addTag = ""
+      this.addTag = "";
+      this.getAllOtherTags();
     },
 
     onAvailableClick: function() {
