@@ -83,6 +83,9 @@
                   <span v-if="isInDatabase">Sauvegarder</span>
                   <span v-else>Ajouter</span>
                 </button>
+                <button v-if="isNativePlatform && isInDatabase" @click="share()" class="button is-primary">
+                  Partager
+                </button>
               </div>
             </div>
           </div>
@@ -95,8 +98,10 @@
 <script>
 import StarRating from "vue-star-rating";
 import axios from "axios";
+import { Share } from '@capacitor/share';
 
 import { db } from "../db";
+import {Capacitor} from "@capacitor/core";
 
 export default {
   name: "Details.vue",
@@ -112,7 +117,8 @@ export default {
       loading: false,
       status: "over",
       addTag: "",
-      isInDatabase: false
+      isInDatabase: false,
+      isNativePlatform: Capacitor.isNativePlatform()
     }
   },
   setup() {
@@ -300,6 +306,15 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+    },
+
+    async share() {
+      await Share.share({
+        title: 'HomeLibrary',
+        text: 'J\'ai ajouté ce livre dans homelibrary '+ this.book.selfRate !== undefined ? ' et je lui ai mi la note de ' + this.book.selfRate + '/5' : '',
+        url: 'https://github.com/perretpy',
+        dialogTitle: 'Share with HomeLibrary',
+      });
     }
   }
 }
