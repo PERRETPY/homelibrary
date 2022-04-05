@@ -1,7 +1,5 @@
 <template>
   <div class="container" v-if="!loading">
-    <button class="button" @click="resetDatabase()">Reset database</button>
-    <button class="button" @click="getAllBooksFromDatabase()">getAll from database</button>
     <div class="columns">
       <div class="column is-half-tablet" v-if="book">
         <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
@@ -100,7 +98,9 @@ import StarRating from "vue-star-rating";
 import axios from "axios";
 import { Share } from '@capacitor/share';
 
-import { db } from "../db";
+import { DexieService } from "../services/dexieService"
+
+
 import {Capacitor} from "@capacitor/core";
 
 export default {
@@ -118,30 +118,18 @@ export default {
       status: "over",
       addTag: "",
       isInDatabase: false,
-      isNativePlatform: Capacitor.isNativePlatform()
+      isNativePlatform: Capacitor.isNativePlatform(),
+      dexieService: new DexieService()
     }
-  },
-  setup() {
-    return {
-      db,
-    };
   },
   mounted() {
     this.loading = true;
-    this.existByIsbn(this.id).then((exist) => {
+    this.dexieService.existByISBN(this.id).then((exist) => {
       this.isInDatabase = exist;
       this.loadBook();
     });
   },
   methods: {
-    resetDatabase: function() {
-      this.db.books.clear();
-    },
-
-    async getAllBooksFromDatabase() {
-      console.log(await this.db.books.toArray());
-    },
-
     onSave: function() {
       console.log("onSave()");
       if(this.isInDatabase) {
@@ -192,7 +180,7 @@ export default {
           newBook.authors.push(author);
         });
 
-        db.books.add(newBook).then(
+        this.dexieService.addBook(newBook).then(
             (added) => {
               if(added){
                 console.log("Book add");
@@ -232,16 +220,10 @@ export default {
 
       console.log('Available : ' + updateBook.available);
 
-      db.books.where("isbn").equals(id).modify(updateBook).then(
+      this.dexieService.updateBook(id, updateBook).then(
         (updated) => {
               console.log(updated);
       });
-    },
-
-    async existByIsbn(id) {
-      console.log("Is " + id + " exist ?");
-      console.log(!!(await this.db.books.get({isbn: id})));
-      return !!(await this.db.books.get({isbn: id}));
     },
 
     onDeleteTag: function(key) {
@@ -272,7 +254,7 @@ export default {
 
     loadBookFromDatabase: function () {
       console.log("loadBookFromDatabase");
-      this.db.books.get({isbn: this.id}).then(
+      this.dexieService.getBookByISBN(this.id).then(
           (book) => {
             this.book = book;
             console.log('Available load : ' + this.book.available);
@@ -311,7 +293,8 @@ export default {
     async share() {
       await Share.share({
         title: 'HomeLibrary',
-        text: 'J\'ai ajouté ce livre dans homelibrary '+ this.book.selfRate !== undefined ? ' et je lui ai mi la note de ' + this.book.selfRate + '/5' : '',
+        text: 'J\'ai ajouté ce livre dans homelibrary '
+          + this.book.selfRate !== undefined ? ' et je lui ai mi la note de ' + this.book.selfRate + '/5' : '',
         url: 'https://github.com/perretpy',
         dialogTitle: 'Share with HomeLibrary',
       });

@@ -61,9 +61,9 @@
 </template>
 
 <script>
-import {db} from "../db";
 import BookPreview from "./BookPreview";
 import ToastService from "../services/toastService";
+import { DexieService } from "../services/dexieService"
 
 export default {
   name: "Library.vue",
@@ -77,13 +77,9 @@ export default {
       searchInput: "",
       readInput: undefined,
       availableInput: undefined,
-      toastService: {}
+      toastService: {},
+      dexieService: new DexieService()
     }
-  },
-  setup() {
-    return {
-      db,
-    };
   },
   mounted() {
     this.toastService = ToastService.getInstance();
@@ -108,7 +104,7 @@ export default {
     async getAllTags() {
       let allTags = [];
 
-      const allBook = await this.db.books.toArray();
+      const allBook = await this.dexieService.getAllBooks();
       allBook.forEach(
         (book) => {
           book.tags.forEach(
@@ -134,21 +130,7 @@ export default {
       const read = this.readInput;
 
       console.log("onSearch : " + searchKeyWord);
-      this.db.books.orderBy("title").filter(
-          (book) => {
-            if((searchKeyWord === "" ? true : (
-                book.tags.includes(searchKeyWord)
-                || book.authors.includes(searchKeyWord)
-                || book.title.includes(searchKeyWord))
-                )
-                && (available === undefined ? true : book.available === available)
-                && (read === undefined ? true : book.read === read)
-                && (tag === "all" ? true : book.tags.includes(tag))
-            ) {
-              return true;
-            }
-          }
-      ).toArray().then(
+      this.dexieService.getBooksByFilters(searchKeyWord, available, read, tag).then(
           (response) => {
             this.booksList = response;
             if(response.length === 0) {
