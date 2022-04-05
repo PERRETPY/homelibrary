@@ -63,7 +63,8 @@
 <script>
 import BookPreview from "./BookPreview";
 import ToastService from "../services/toastService";
-import { DexieService } from "../services/dexieService"
+import {CapacitorStorage, DexieStorage} from "../services/StorageService"
+import {Capacitor} from "@capacitor/core";
 
 export default {
   name: "Library.vue",
@@ -78,12 +79,18 @@ export default {
       readInput: undefined,
       availableInput: undefined,
       toastService: {},
-      dexieService: new DexieService()
+      isNativePlatform: Capacitor.isNativePlatform(),
+      storageService: {}
     }
   },
   mounted() {
-    this.toastService = ToastService.getInstance();
     this.loading = true;
+    if(this.isNativePlatform) {
+      this.storageService = new CapacitorStorage();
+    }else {
+      this.storageService = new DexieStorage();
+    }
+    this.toastService = ToastService.getInstance();
     this.getAllTags();
     this.onSearch();
   },
@@ -104,7 +111,7 @@ export default {
     async getAllTags() {
       let allTags = [];
 
-      const allBook = await this.dexieService.getAllBooks();
+      const allBook = await this.storageService.getAllBooks();
       allBook.forEach(
         (book) => {
           book.tags.forEach(
@@ -130,7 +137,7 @@ export default {
       const read = this.readInput;
 
       console.log("onSearch : " + searchKeyWord);
-      this.dexieService.getBooksByFilters(searchKeyWord, available, read, tag).then(
+      this.storageService.getBooksByFilters(searchKeyWord, available, read, tag).then(
           (response) => {
             this.booksList = response;
             if(response.length === 0) {

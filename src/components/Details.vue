@@ -98,7 +98,7 @@ import StarRating from "vue-star-rating";
 import axios from "axios";
 import { Share } from '@capacitor/share';
 
-import { DexieService } from "../services/dexieService"
+import { DexieStorage, CapacitorStorage } from "../services/StorageService"
 
 
 import {Capacitor} from "@capacitor/core";
@@ -119,15 +119,21 @@ export default {
       addTag: "",
       isInDatabase: false,
       isNativePlatform: Capacitor.isNativePlatform(),
-      dexieService: new DexieService()
+      storageService: {}
     }
   },
   mounted() {
     this.loading = true;
-    this.dexieService.existByISBN(this.id).then((exist) => {
+    if(this.isNativePlatform) {
+      this.storageService = new CapacitorStorage();
+    }else {
+      this.storageService = new DexieStorage();
+    }
+    this.storageService.existByISBN(this.id).then((exist) => {
       this.isInDatabase = exist;
       this.loadBook();
     });
+
   },
   methods: {
     onSave: function() {
@@ -143,7 +149,7 @@ export default {
 
     onDelete: function() {
       console.log('onDelete : ' + this.book.id);
-      this.db.books.where("isbn").equals(this.id).delete().then(
+      this.storageService.removeBookByISBN(this.id).then(
           (deleted) => {
             if(deleted) {
               console.log("Successfully delete");
@@ -180,7 +186,7 @@ export default {
           newBook.authors.push(author);
         });
 
-        this.dexieService.addBook(newBook).then(
+        this.storageService.addBook(newBook).then(
             (added) => {
               if(added){
                 console.log("Book add");
@@ -220,7 +226,7 @@ export default {
 
       console.log('Available : ' + updateBook.available);
 
-      this.dexieService.updateBook(id, updateBook).then(
+      this.storageService.updateBook(id, updateBook).then(
         (updated) => {
               console.log(updated);
       });
@@ -254,7 +260,7 @@ export default {
 
     loadBookFromDatabase: function () {
       console.log("loadBookFromDatabase");
-      this.dexieService.getBookByISBN(this.id).then(
+      this.storageService.getBookByISBN(this.id).then(
           (book) => {
             this.book = book;
             console.log('Available load : ' + this.book.available);
