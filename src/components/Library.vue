@@ -48,27 +48,18 @@
       <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
     </select>
   </div>
-
-
-
-  <div class="columns is-multiline">
-    <div class="column is-half-tablet is-one-third-desktop is-one-quarter-widescreen"
-         v-for="book in booksList"
-         :key="book.isbn">
-      <BookPreview @click="showBooksDetails(book.isbn)" :book="book"></BookPreview>
-    </div>
-  </div>
+  <BookList :booksList="booksList"></BookList>
 </template>
 
 <script>
-import BookPreview from "./BookPreview";
 import ToastService from "../services/toastService";
 import {CapacitorStorage, DexieStorage} from "../services/StorageService"
 import {Capacitor} from "@capacitor/core";
+import BookList from "./BookList";
 
 export default {
   name: "Library.vue",
-  components: {BookPreview},
+  components: {BookList},
   data() {
     return {
       booksList: [],
@@ -99,13 +90,6 @@ export default {
       this.searchTag = 'all';
       this.searchInput = '';
       this.getAllBooksFromDatabase();
-    },
-
-    showBooksDetails(bookISBN) {
-      this.$router.push({
-        name: "Details",
-        params: { id: bookISBN },
-      });
     },
 
     async getAllTags() {
@@ -146,7 +130,6 @@ export default {
           }
       );
     },
-
   }
 }
 </script>
