@@ -2,8 +2,14 @@
   <div class="container" v-if="!loading">
     <div class="columns">
       <div class="column is-half-tablet" v-if="book">
-        <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
-        <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
+        <div v-if="isInDatabase">
+          <img v-if="book.imageLink" class="book-cover" v-bind:src="book.imageLink" alt="">
+          <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
+        </div>
+        <div v-else>
+          <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
+          <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
+        </div>
       </div>
       <div class="column is-half-tablet details" v-if="book">
         <h2>Titre : {{ book.title }}</h2>
@@ -210,6 +216,9 @@ export default {
         newBook.review = undefined;
         newBook.available = true;
         newBook.read = false;
+        if(book.imageLinks && book.imageLinks.thumbnail) {
+          newBook.imageLink = book.imageLinks.thumbnail;
+        }
 
         book.authors.forEach((author) => {
           newBook.authors.push(author);
@@ -249,6 +258,10 @@ export default {
       updateBook.review = book.review;
       updateBook.available = book.available;
       updateBook.read = book.read;
+
+      if(book.imageLink) {
+        updateBook.imageLink = book.imageLink;
+      }
 
       book.tags.forEach((tag) => {
         updateBook.tags.push(tag);
