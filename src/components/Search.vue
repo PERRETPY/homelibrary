@@ -82,12 +82,17 @@ export default {
       }
     },
     async onSearchByKeyword() {
-      this.serverService.getBookByISBN(this.keywords).then(
+      this.serverService.getBooksBySearch(this.keywords).then(
           (response) => {
-            this.booksList = response;
+            response.forEach(
+                (bookResponse) => {
+                  let book = bookResponse.data.volumeInfo;
+                  this.booksList.push(book);
+              }
+            )
+            this.gotSearchResult = true;
           }
       );
-      this.gotSearchResult = true;
     }
   }
 }

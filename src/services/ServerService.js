@@ -10,8 +10,6 @@ export class GoogleServer {
             .get(this.baseUrl + '?q=isbn:' + isbn)
             .then(
                 (response) => {
-                    console.log('HELLO : ');
-                    console.log(response);
                     book = axios.get(response.data.items[0].selfLink);
                 }
             )
@@ -20,26 +18,25 @@ export class GoogleServer {
             });
         return book;
     }
-    getBooksBySearch(keywords) {
-        axios
+    async getBooksBySearch(keywords) {
+        let books;
+        console.log('search By Keywords');
+        await axios
             .get(this.baseUrl + '?q=' + keywords)
             .then(
                 (response) => {
                     let requestLink = [];
                     response.data.items.forEach(
                         (item) => {
-                            console.log('push');
                             requestLink.push(item.selfLink);
                         }
                     )
-                    console.log('return');
-                    //return axios.get(response.data.items[0].selfLink)
-                    return axios.all(requestLink.map((request) => axios.get(request)));
-                    //console.log(axios.all(requestLink.map((request) => axios.get(request))));
+                    books = axios.all(requestLink.map((request) => axios.get(request)));
                 }
             )
             .catch((error) => {
                 console.log(error);
             });
+        return books;
     }
 }
