@@ -53,7 +53,7 @@
 
 <script>
 import ToastService from "../services/toastService";
-import {CapacitorStorage} from "../services/StorageService"
+import {CapacitorStorage, DexieStorage} from "../services/StorageService"
 import {Capacitor} from "@capacitor/core";
 import BookList from "./BookList";
 
@@ -76,15 +76,11 @@ export default {
   },
   mounted() {
     this.loading = true;
-    this.storageService = new CapacitorStorage();
-/*
     if(this.isNativePlatform) {
       this.storageService = new CapacitorStorage();
     }else {
       this.storageService = new DexieStorage();
     }
-
- */
     this.toastService = ToastService.getInstance();
     this.getAllTags();
     this.onSearch();
