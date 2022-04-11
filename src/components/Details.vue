@@ -108,7 +108,7 @@ import StarRating from "vue-star-rating";
 import { Share } from '@capacitor/share';
 import { GoogleServer } from "../services/ServerService";
 import ToastService from "../services/toastService";
-import { DexieStorage, CapacitorStorage } from "../services/StorageService"
+import { CapacitorStorage } from "../services/StorageService"
 
 
 import {Capacitor} from "@capacitor/core";
@@ -138,13 +138,7 @@ export default {
   mounted() {
     this.loading = true;
     this.toastService = ToastService.getInstance();
-
-    if(this.isNativePlatform) {
-      this.storageService = new CapacitorStorage();
-    }else {
-      this.storageService = new DexieStorage();
-    }
-
+    this.storageService = new CapacitorStorage();
     this.serverService = new GoogleServer();
     this.storageService.existByISBN(this.id).then((exist) => {
       this.isInDatabase = exist;
