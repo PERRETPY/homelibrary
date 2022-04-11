@@ -12,9 +12,9 @@
         </div>
       </div>
       <div class="column is-half-tablet details" v-if="book">
-        <h2>Titre : {{ book.title }}</h2>
-        <h3 v-if="book.authors">Auteur : {{ book.authors.join(' ,') }}</h3>
-        <h3>Date de parution : {{ book.publishedDate }}</h3>
+        <h2 class="title is-2">{{ book.title }}</h2>
+        <h5 class="title is-5" v-if="book.authors">{{ book.authors.join(', ') }}</h5>
+        <h5 class="title is-5">Date de parution : {{ book.publishedDate }}</h5>
         <div v-if="isInDatabase && book.tags">
           <span class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
           {{ tag }}
@@ -26,11 +26,11 @@
               <option v-for="tag in allOtherTags" :key="tag">{{tag}}</option>
             </datalist>
 
-            <button class="button" @click="onAddTag()">Add</button>
+            <button class="button" @click="onAddTag()">Ajouter</button>
           </div>
         </div>
 
-        <h3>Description : </h3>
+        <h6 class="title is-6">Description</h6>
         <p class="description" v-if="book.description" v-html="book.description"/>
         <p v-else> pas de description pour le moment</p>
 
@@ -42,7 +42,7 @@
             <star-rating v-model:rating="book.averageRating" :star-size="20" :round-start-rating="false" :read-only="true"></star-rating>
           </div>
           <div v-else>
-            <p>pas d'avis pour le moment </p>
+            <p><i>pas d'avis pour le moment </i></p>
             <star-rating v-model:rating="book.averageRating" :star-size="20" :round-start-rating="false" :read-only="true"></star-rating>
           </div>
         </div>
@@ -53,14 +53,12 @@
           <div class="field-body">
             <div class="field">
               <div class="control">
-                <textarea v-if="book.review" class="textarea" v-model="book.review"></textarea>
-                <textarea v-else class="textarea" placeholder="Comment avez-vous trouvé ce livre ?" v-model="book.review"></textarea>
+                <textarea class="textarea" :placeholder="book.review ? '' : 'Comment avez-vous trouvé ce livre ?'" v-model="book.review"></textarea>
               </div>
             </div>
           </div>
         </div>
         <div>
-          Ce livre est
           <button
               v-if="isInDatabase"
               class="button is-rounded"
