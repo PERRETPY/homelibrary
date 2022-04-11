@@ -67,6 +67,7 @@
             <span v-if="book.available">Disponnible</span>
             <span v-else>Indisponnible</span>
           </button>
+          <input v-if="!book.available" class="input" type="text" v-model="book.availableNote" placeholder="Pourquoi ce livre n'est pas disponnible ?">
         </div>
         <div>
           <button
@@ -208,6 +209,7 @@ export default {
         newBook.review = undefined;
         newBook.available = true;
         newBook.read = false;
+        newBook.availableNote = undefined;
         if(book.imageLinks && book.imageLinks.thumbnail) {
           newBook.imageLink = book.imageLinks.thumbnail;
         }
@@ -250,6 +252,7 @@ export default {
       updateBook.review = book.review;
       updateBook.available = book.available;
       updateBook.read = book.read;
+      updateBook.availableNote = book.availableNote;
 
       if(book.imageLink) {
         updateBook.imageLink = book.imageLink;
@@ -257,6 +260,10 @@ export default {
 
       book.tags.forEach((tag) => {
         updateBook.tags.push(tag);
+      });
+
+      book.authors.forEach((author) => {
+        updateBook.authors.push(author);
       });
 
       this.storageService.updateBook(id, updateBook).then(
