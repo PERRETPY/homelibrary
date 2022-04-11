@@ -49,26 +49,22 @@ export class CapacitorStorage {
     }
     async getAllBooks() {
         let allBooks = [];
-        await Storage.keys().then(
-            (keys) => {
-                keys.keys.forEach(
-                    (key) => {
-                        Storage.get({ key: key }).then(
-                            (book) => {
-                                allBooks.push(JSON.parse(book.value));
-                            }
-                        )
-                    }
-                )
-            }
-        );
+        let keys = [];
+        keys = (await Storage.keys()).keys;
+        for (const isbn of keys) {
+            await Storage.get({ key: isbn }).then(
+                (book) => {
+                    allBooks.push(JSON.parse(book.value));
+                }
+            )
+        }
         return allBooks;
     }
     async getBookByISBN(isbn) {
         return JSON.parse((await Storage.get({key: isbn})).value);
     }
     async getBooksByFilters(searchKeyWord, available, read, tag) {
-        const allBooks = await this.getAllBooks();
+        let allBooks = await this.getAllBooks();
         let booksFilter = [];
         allBooks.forEach(
             (book) => {
@@ -87,7 +83,7 @@ export class CapacitorStorage {
         return booksFilter;
     }
     async existByISBN(isbn) {
-        return !!(await Storage.get({ key: isbn }));
+        return !!((await Storage.get({ key: isbn })).value);
     }
     async addBook(book) {
         return await Storage.set({

@@ -19,6 +19,29 @@
       </div>
 
       <button class="button is-primary" @click="onGoClick">Submit</button>
+
+
+
+
+      <div class="field">
+        <label class="label">Rechercher un livre</label>
+        <div class="control">
+          <input
+              class="input"
+              v-bind:class="{ 'is-danger': !validForm }"
+              v-model="keywords"
+              type="text"
+              placeholder="Recherche par mots clés">
+        </div>
+      </div>
+
+      <button class="button is-primary" @click="onSearchByKeyword()">Submit</button>
+
+      <div v-if="gotSearchResult" class="search-result">
+        <h2>résultat</h2>
+        <BookList :booksList="booksList"></BookList>
+      </div>
+
     </div>
   </div>
 </template>
@@ -26,29 +49,45 @@
 <script>
 import Scan from "./Scan";
 import {Capacitor} from "@capacitor/core";
+import BookList from "./BookList";
+import {GoogleServer} from "../services/ServerService";
+
 export default {
   name: "Search",
   components: {
-    Scan,
+    Scan, BookList
   },
   data() {
     return {
       isbn: null,
       validForm: true,
-      isNativePlatform: Capacitor.isNativePlatform()
+      keywords: '',
+      booksList: [],
+      gotSearchResult: false,
+      isNativePlatform: Capacitor.isNativePlatform(),
+      serverService: {}
     }
+  },
+  mounted() {
+    this.serverService = new GoogleServer();
   },
   methods: {
     onGoClick: function () {
-      console.log(this.isbn)
       const regex = /97[89][0-9]{10}/
       if ( regex.test(this.isbn) ) {
         this.validForm = true;
         this.$router.replace({ path: '/details/'+this.isbn })
       } else {
         this.validForm = false;
-        console.log(this.validForm)
       }
+    },
+    async onSearchByKeyword() {
+      this.serverService.getBookByISBN(this.keywords).then(
+          (response) => {
+            this.booksList = response;
+          }
+      );
+      this.gotSearchResult = true;
     }
   }
 }

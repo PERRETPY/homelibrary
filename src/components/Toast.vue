@@ -1,5 +1,4 @@
 <template>
-  <p>Toast</p>
   <div v-if="toastService && toastService.toastList && toastService.toastList.length > 0">
     <div
         v-for="(toast, index)  in toastService.toastList"

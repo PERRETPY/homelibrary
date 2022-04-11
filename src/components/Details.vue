@@ -99,9 +99,9 @@
 
 <script>
 import StarRating from "vue-star-rating";
-import axios from "axios";
 import { Share } from '@capacitor/share';
-
+import { GoogleServer } from "../services/ServerService";
+import ToastService from "../services/toastService";
 import { DexieStorage, CapacitorStorage } from "../services/StorageService"
 
 
@@ -124,16 +124,22 @@ export default {
       allOtherTags: [],
       isInDatabase: false,
       isNativePlatform: Capacitor.isNativePlatform(),
-      storageService: {}
+      storageService: {},
+      serverService: {},
+      toastService: {}
     }
   },
   mounted() {
     this.loading = true;
+    this.toastService = ToastService.getInstance();
+
     if(this.isNativePlatform) {
       this.storageService = new CapacitorStorage();
     }else {
       this.storageService = new DexieStorage();
     }
+
+    this.serverService = new GoogleServer();
     this.storageService.existByISBN(this.id).then((exist) => {
       this.isInDatabase = exist;
       this.loadBook();
@@ -142,12 +148,9 @@ export default {
   },
   methods: {
     onSave: function() {
-      console.log("onSave()");
       if(this.isInDatabase) {
-        console.log("updateBook()");
         this.updateBook(this.id, this.book);
       }else {
-        console.log("addBookToDatabase()");
         this.addBookToDatabase(this.book);
       }
     },
@@ -177,24 +180,21 @@ export default {
     },
 
     onDelete: function() {
-      console.log('onDelete : ' + this.book.id);
       this.storageService.removeBookByISBN(this.id).then(
           (deleted) => {
             if(deleted) {
-              console.log("Successfully delete");
+              this.toastService.show("Supression réussi", "is-info");
               this.isInDatabase = false;
               this.loadBookFromServer();
             }else {
-              console.log("Error on delete");
+              this.toastService.show("Supression echouée", "is-danger");
             }
           }
       );
     },
 
-    addBookToDatabase: function(book) {
+    async addBookToDatabase(book) {
       try {
-        console.log("On adding book : " + book.isbn);
-
         let newBook = {};
 
         newBook.isbn = this.id;
@@ -218,24 +218,18 @@ export default {
         this.storageService.addBook(newBook).then(
             (added) => {
               if(added){
-                console.log("Book add");
+                this.toastService.show("Ajout réussi", "is-info");
               }else {
-                console.log("Book not add");
+                this.toastService.show("Erreur lors de l'ajout", "is-danger");
               }
           }
         )
-
-        console.log("book add");
-
-        this.status = `Books ${book.isbn}
-          successfully added.`;
 
         this.loadBookFromDatabase();
         this.isInDatabase = true;
 
       } catch (error) {
-        this.status = `Failed to add
-          ${book.isbn}: ${error}`;
+        this.toastService.show("Erreur lors de l'ajout", "is-danger");
       }
     },
 
@@ -243,7 +237,14 @@ export default {
       let updateBook = {};
 
       updateBook.isbn = this.id;
+      updateBook.title = book.title;
+      updateBook.authors = [];
+      updateBook.publishedDate = book.publishedDate;
+      updateBook.description = book.description;
       updateBook.tags = [];
+      updateBook.ratingsCount = book.ratingsCount;
+      updateBook.averageRating = book.averageRating;
+      updateBook.rate = book.rate;
       updateBook.selfRate = book.selfRate;
       updateBook.review = book.review;
       updateBook.available = book.available;
@@ -253,11 +254,13 @@ export default {
         updateBook.tags.push(tag);
       });
 
-      console.log('Available : ' + updateBook.available);
-
       this.storageService.updateBook(id, updateBook).then(
         (updated) => {
-              console.log(updated);
+          if(updated) {
+            this.toastService.show("Mise à jour réussi", "is-info");
+          } else {
+            this.toastService.show("Erreur lors de la mise à jour", "is-danger");
+          }
       });
     },
 
@@ -267,7 +270,6 @@ export default {
     },
 
     onAddTag: function() {
-      console.log(this.tags);
       this.book.tags.push(this.addTag);
       this.addTag = "";
       this.getAllOtherTags();
@@ -290,41 +292,30 @@ export default {
     },
 
     loadBookFromDatabase: function () {
-      console.log("loadBookFromDatabase");
       this.storageService.getBookByISBN(this.id).then(
           (book) => {
             this.book = book;
-            console.log('Available load : ' + this.book.available);
             this.loading = false;
           },
-          (error) => {
-            console.log(error);
+          () => {
+            this.toastService.show('Erreur lors de la réccupération', 'is-warning');
             this.loadBookFromServer();
           }
       )
     },
 
     loadBookFromServer: function() {
-      console.log('get book from server');
-      axios
-          .get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+this.id)
-          .then((response) => {
-            axios
-                .get(response.data.items[0].selfLink)
-                .then((responseBook) => {
-                  const book = responseBook.data.volumeInfo;
-
-                  this.book = book;
-
-                  this.loading = false;
-                })
-                .catch((error) => {
-                  console.log(error);
-                })
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+      this.serverService.getBookByISBN(this.id)
+          .then(
+            (response) => {
+              this.book = response.data.volumeInfo;
+              this.loading = false;
+            })
+          .catch(
+              () => {
+                this.toastService.show('Erreur lors de la réccupération', 'is-danger');
+              }
+          );
     },
 
     async share() {

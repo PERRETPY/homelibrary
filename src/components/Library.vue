@@ -53,7 +53,7 @@
 
 <script>
 import ToastService from "../services/toastService";
-import {CapacitorStorage, DexieStorage} from "../services/StorageService"
+import {CapacitorStorage} from "../services/StorageService"
 import {Capacitor} from "@capacitor/core";
 import BookList from "./BookList";
 
@@ -76,11 +76,15 @@ export default {
   },
   mounted() {
     this.loading = true;
+    this.storageService = new CapacitorStorage();
+/*
     if(this.isNativePlatform) {
       this.storageService = new CapacitorStorage();
     }else {
       this.storageService = new DexieStorage();
     }
+
+ */
     this.toastService = ToastService.getInstance();
     this.getAllTags();
     this.onSearch();
@@ -89,7 +93,6 @@ export default {
     resetSearch: function() {
       this.searchTag = 'all';
       this.searchInput = '';
-      this.getAllBooksFromDatabase();
     },
 
     async getAllTags() {
@@ -120,9 +123,12 @@ export default {
       const available = this.availableInput;
       const read = this.readInput;
 
-      console.log("onSearch : " + searchKeyWord);
+      console.log("onSearchl : " + searchKeyWord);
       this.storageService.getBooksByFilters(searchKeyWord, available, read, tag).then(
           (response) => {
+            console.log('RESPONSE1');
+            console.log(response);
+            console.log('RESPONSE2');
             this.booksList = response;
             if(response.length === 0) {
               this.toastService.show("Aucun livre trouvé", "is-warning")
