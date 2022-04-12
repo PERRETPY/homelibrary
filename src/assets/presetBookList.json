@@ -9,5 +9,45 @@
     "review": "Super livre",
     "available": true,
     "read": true
+  },
+  {
+    "isbn": 9782253127048,
+    "tags": [
+      "Thriller",
+      "Poche"
+    ],
+    "selfRate": 4,
+    "review": "Prix des lecteurs 2019 c'est mérité !",
+    "available": false,
+    "availableNote": "Prêté au voisin",
+    "read": true
+  },
+  {
+    "isbn": 9782714455208,
+    "tags": [
+      "Frisson"
+    ],
+    "available": true,
+    "read": false
+  },
+  {
+    "isbn": 9791093463742,
+    "tags": [
+      "Sport loisirs et vie pratique"
+    ],
+    "selfRate": 5,
+    "review": "Très interessant pour la préparation sportive",
+    "available": true,
+    "read": true
+  },
+  {
+    "isbn": 9782016292396,
+    "tags": [
+      "Guides pratiques",
+      "Sport loisirs et vie pratique"
+    ],
+    "available": false,
+    "availableNote": "Commande en cours",
+    "read": false
   }
 ]
