@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <button class="button is-danger" @click="resetDatabase()">Reset database</button>
+    <button class="button is-info" @click="loadPresetBookList()">loadPresetBookList</button>
     <table class="table is-fullwidth is-hoverable">
       <thead>
         <tr>
@@ -24,6 +25,7 @@
 
 <script>
 import {CapacitorStorage} from "../services/StorageService"
+import jsonFile from "../assets/presetBookList.json"
 
 export default {
   name: "AppTestActions",
@@ -61,6 +63,14 @@ export default {
             this.getAllBooks();
           }
       )
+    },
+    async loadPresetBookList() {
+      await jsonFile.forEach(
+          (book) => {
+            this.storageService.addBookByISBNandValues(book.isbn, book);
+          }
+      );
+      this.getAllBooks();
     }
   }
 }

@@ -1,0 +1,13 @@
+[
+  {
+    "isbn": 9782501124997,
+    "tags": [
+      "Autobiographie",
+      "Sport"
+    ],
+    "selfRate": 3.5,
+    "review": "Super livre",
+    "available": true,
+    "read": true
+  }
+]

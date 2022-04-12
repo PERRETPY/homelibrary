@@ -1,7 +1,10 @@
 import { Storage } from '@capacitor/storage';
+import { GoogleServer } from "./ServerService";
+
 
 export class CapacitorStorage {
     constructor() {
+        this.serverService = new GoogleServer();
     }
     async getAllBooks() {
         let allBooks = [];
@@ -58,5 +61,33 @@ export class CapacitorStorage {
     }
     async resetDatabase() {
         return await Storage.clear();
+    }
+    async addBookByISBNandValues(isbn, book) {
+        this.serverService.getBookByISBN(isbn).then(
+            (response) => {
+                const bookServer = response.data.volumeInfo
+
+                const newBook = {};
+                newBook.isbn = isbn;
+                newBook.title = bookServer.title;
+                newBook.authors = bookServer.authors;
+                newBook.publishedDate = bookServer.publishedDate;
+                newBook.description = bookServer.description;
+                newBook.ratingsCount = bookServer.ratingsCount;
+                newBook.averageRating = bookServer.averageRating;
+                newBook.tags = book.tags;
+                newBook.selfRate = book.selfRate;
+                newBook.review = book.review;
+                newBook.available = book.available;
+                newBook.availableNote = book.availableNote;
+                newBook.read = book.read;
+
+                if(bookServer.imageLinks && bookServer.imageLinks.thumbnail) {
+                    newBook.imageLink = bookServer.imageLinks.thumbnail;
+                }
+
+                this.addBook(newBook);
+            }
+        )
     }
 }
