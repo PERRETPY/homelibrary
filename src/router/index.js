@@ -6,6 +6,7 @@ import About from "../components/About";
 import NotFound from "../components/NotFound";
 
 import {createRouter, createWebHistory} from "vue-router";
+import AppTestActions from "../components/AppTestActions";
 
 const routes = [
     {
@@ -33,6 +34,11 @@ const routes = [
         path: '/about',
         name: 'About',
         component: About
+    },
+    {
+        path: '/actions',
+        name: 'Actions',
+        component: AppTestActions
     },
     {
         path: '/:pathMatch(.*)*',

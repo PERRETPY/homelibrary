@@ -47,6 +47,9 @@
             </a>
           </div>
         </div>
+
+        <router-link class="navbar-item" to="/actions"> Actions de test </router-link>
+
       </div>
 
       <div class="navbar-end">
