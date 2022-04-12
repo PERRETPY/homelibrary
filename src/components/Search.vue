@@ -5,37 +5,42 @@
     </div>
     <div v-else>
 
-      <div class="field">
-        <label class="label">Rechercher un livre</label>
-        <div class="control">
-          <input
-              class="input"
-              v-bind:class="{ 'is-danger': !validForm }"
-              v-model="isbn"
-              type="text"
-              placeholder="ISBN">
+      <form @submit.prevent="onGoClick()">
+        <div class="field">
+          <label class="label">Rechercher un livre</label>
+          <div class="control">
+            <input
+                class="input"
+                v-bind:class="{ 'is-danger': !validForm }"
+                v-model="isbn"
+                type="text"
+                placeholder="ISBN">
+          </div>
+          <p v-if="!validForm" class="help is-danger">This ISBN is not correct</p>
         </div>
-        <p v-if="!validForm" class="help is-danger">This ISBN is not correct</p>
-      </div>
 
-      <button class="button is-primary" @click="onGoClick">Submit</button>
-
+        <button class="button is-primary" type="submit">Submit</button>
+      </form>
 
 
 
-      <div class="field">
-        <label class="label">Rechercher un livre</label>
-        <div class="control">
-          <input
-              class="input"
-              v-bind:class="{ 'is-danger': !validForm }"
-              v-model="keywords"
-              type="text"
-              placeholder="Recherche par mots clés">
+
+      <form @submit.prevent="onSearchByKeyword()">
+        <div class="field">
+          <label class="label">Rechercher un livre</label>
+          <div class="control">
+            <input
+                class="input"
+                v-bind:class="{ 'is-danger': !validForm }"
+                v-model="keywords"
+                type="text"
+                placeholder="Recherche par mots clés">
+          </div>
         </div>
-      </div>
 
-      <button class="button is-primary" :class="loading ? 'is-loading' : ''" @click="onSearchByKeyword()">Submit</button>
+        <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit">Submit</button>
+      </form>
+
 
       <div v-if="gotSearchResult" class="search-result">
         <BookList :booksList="booksList"></BookList>
