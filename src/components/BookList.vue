@@ -11,6 +11,7 @@
 
 <script>
 import BookPreview from "./BookPreview";
+import ToastService from "../services/toastService";
 
 export default {
   name: "BookList",
@@ -18,13 +19,30 @@ export default {
   props: {
     booksList: {}
   },
+  data() {
+    return {
+      toastService: {}
+    }
+  },
+  mounted() {
+    this.toastService = ToastService.getInstance();
+  },
   methods: {
     showBooksDetails(book) {
       let isbn = '';
       if(book.isbn) {
         isbn = book.isbn;
       } else {
-        isbn = book.industryIdentifiers[1].identifier
+        book.industryIdentifiers.forEach(
+            (identifier) => {
+              if(identifier.type === 'ISBN_13') {
+                isbn = identifier.identifier;
+              }
+            }
+        );
+        if(this.isbn === '') {
+          this.toastService.show('Une erreur est survenue avec ce livre', 'is-danger');
+        }
       }
       this.$router.push({
         name: "Details",
