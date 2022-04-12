@@ -10,8 +10,14 @@ export default class ToastService {
         return this.instance;
     }
     show(message, className) {
-        this.toastList.push({message: message, class: className});
+        const id = Date.now();
+        this.toastList.push({id: id, message: message, class: className});
         this.toastStackCSS.push("top: " + 75*this.toastList.length + "px");
+
+        setTimeout(() => {
+            this.toastList = this.toastList.filter(t => t.id !== id);
+        }, 5000);
+
     }
     remove(toast) {
         this.toastList = this.toastList.filter(t => t !== toast);
