@@ -156,6 +156,34 @@ export default {
     },
 
     async getAllOtherTags() {
+      const categoryTags =
+          ['Art musique et cinéma',
+            'Bandes dessinées',
+            'Cuisine',
+            'Développement personnel',
+            'Dictionnaires & langues',
+            'Droit & économie',
+            'Essais et documents',
+            'Guides pratiques',
+            'Histoire',
+            'Humour',
+            'Informatique et internet',
+            'Jeunesse', 'Littérature',
+            'Littérature sentimentale',
+            'Policier',
+            'suspense',
+            'thrillers',
+            'Religion et spiritualité',
+            'Sciences sociales',
+            'Sciences',
+            'techniques & médecine',
+            'Scolaire',
+            'SF',
+            'Fantasy',
+            'Sport loisirs et vie pratique',
+            'Théâtre',
+            'Tourisme et voyages'];
+
       let allTags = [];
 
       const allBook = await this.storageService.getAllBooks();
@@ -170,6 +198,13 @@ export default {
             )
           }
       );
+      categoryTags.forEach(
+          (tag) => {
+            if(!this.book.tags.includes(tag)) {
+              allTags.push(tag);
+            }
+          }
+      )
 
       allTags = allTags.filter(this.onlyUnique);
       this.allOtherTags = allTags;
@@ -361,6 +396,7 @@ export default {
   }
   .tag {
     margin-right: 1em;
+    margin-bottom: 1em;
   }
   .description {
     max-height: 20em;
@@ -374,5 +410,9 @@ export default {
   }
   textarea {
     resize: none;
+  }
+  img {
+    width: 100%;
+    object-fit: contain;
   }
 </style>
