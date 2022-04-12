@@ -180,17 +180,19 @@ export default {
     },
 
     onDelete: function() {
-      this.storageService.removeBookByISBN(this.id).then(
-          (deleted) => {
-            if(deleted) {
-              this.toastService.show("Supression réussi", "is-info");
-              this.isInDatabase = false;
-              this.loadBookFromServer();
-            }else {
-              this.toastService.show("Supression echouée", "is-danger");
-            }
-          }
-      );
+      this.storageService.removeBookByISBN(this.id)
+          .then(
+              () => {
+                this.toastService.show("Supression réussi", "is-info");
+                this.isInDatabase = false;
+                this.loadBookFromServer();
+              }
+          )
+          .catch(
+              () => {
+                this.toastService.show("Erreur lors de la mise à jour", "is-danger");
+              }
+          );
     },
 
     async addBookToDatabase(book) {
@@ -220,14 +222,15 @@ export default {
         });
 
         this.storageService.addBook(newBook).then(
-            (added) => {
-              if(added){
-                this.toastService.show("Ajout réussi", "is-info");
-              }else {
-                this.toastService.show("Erreur lors de l'ajout", "is-danger");
-              }
-          }
+            () => {
+              this.toastService.show("Ajout réussi", "is-info");
+            }
         )
+            .catch(
+                () => {
+                  this.toastService.show("Erreur lors de l'ajout'", "is-danger");
+                }
+            );
 
         this.loadBookFromDatabase();
         this.isInDatabase = true;
@@ -267,14 +270,17 @@ export default {
         updateBook.authors.push(author);
       });
 
-      this.storageService.updateBook(id, updateBook).then(
-        (updated) => {
-          if(updated) {
-            this.toastService.show("Mise à jour réussi", "is-info");
-          } else {
-            this.toastService.show("Erreur lors de la mise à jour", "is-danger");
-          }
-      });
+      this.storageService.updateBook(id, updateBook)
+        .then(
+              () => {
+                this.toastService.show("Mise à jour réussi", "is-info");
+              }
+          )
+          .catch(
+              () => {
+                this.toastService.show("Erreur lors de la mise à jour", "is-danger");
+              }
+          );
     },
 
     onDeleteTag: function(key) {
