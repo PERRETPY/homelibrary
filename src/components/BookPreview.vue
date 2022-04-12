@@ -4,7 +4,7 @@
       <div class="media">
         <div class="media-content">
           <p class="title is-4">{{ book.title }}</p>
-          <p class="subtitle is-6">{{ book.authors.join(', ') }}</p>
+          <p class="subtitle is-6" v-if="book.authors">{{ book.authors.join(', ') }}</p>
         </div>
       </div>
       <div class="content">
