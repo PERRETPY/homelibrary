@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-
+    <button class="button is-danger" @click="resetDatabase()">Reset database</button>
     <table class="table is-fullwidth is-hoverable">
       <thead>
         <tr>
@@ -53,6 +53,13 @@ export default {
         () => {
           this.getAllBooks()
         }
+      )
+    },
+    resetDatabase: function() {
+      this.storageService.resetDatabase().then(
+          () => {
+            this.getAllBooks();
+          }
       )
     }
   }
