@@ -19,13 +19,13 @@
           <p v-if="!validForm" class="help is-danger">This ISBN is not correct</p>
         </div>
 
-        <button class="button is-primary" type="submit">Submit</button>
+        <button class="button is-primary" type="submit" :disabled="!correctIsbn()">Submit</button>
       </form>
 
 
 
 
-      <form @submit.prevent="onSearchByKeyword()">
+      <form @submit.prevent="goToSearchPage()">
         <div class="field">
           <label class="label">Rechercher un livre</label>
           <div class="control">
@@ -38,7 +38,7 @@
           </div>
         </div>
 
-        <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit">Submit</button>
+        <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="keywords.trim()===''">Submit</button>
       </form>
 
 
@@ -62,6 +62,9 @@ export default {
   components: {
     Scan, BookList
   },
+  props: {
+    q: String
+  },
   data() {
     return {
       isbn: null,
@@ -78,6 +81,10 @@ export default {
   mounted() {
     this.serverService = new GoogleServer();
     this.toastService = ToastService.getInstance();
+    if(this.q) {
+      this.keywords = this.q;
+      this.onSearchByKeyword();
+    }
   },
   methods: {
     onGoClick: function () {
@@ -88,6 +95,10 @@ export default {
       } else {
         this.validForm = false;
       }
+    },
+    correctIsbn: function() {
+      const regex = /97[89][0-9]{10}/
+      return regex.test(this.isbn);
     },
     async onSearchByKeyword() {
       this.loading = true;
@@ -116,6 +127,13 @@ export default {
             this.loading = false;
           }
       );
+    },
+    goToSearchPage: function() {
+      this.$router.replace({
+        name: "SearchQ",
+        params: { q: this.keywords.trim() },
+      });
+      this.onSearchByKeyword();
     }
   }
 }

@@ -31,6 +31,12 @@ const routes = [
         component: Search
     },
     {
+        path: '/search/:q',
+        name: 'SearchQ',
+        props: true,
+        component: Search
+    },
+    {
         path: '/about',
         name: 'About',
         component: About

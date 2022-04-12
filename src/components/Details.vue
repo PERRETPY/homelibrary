@@ -26,7 +26,7 @@
               <option v-for="tag in allOtherTags" :key="tag">{{tag}}</option>
             </datalist>
 
-            <button class="button" @click="onAddTag()">Ajouter</button>
+            <button class="button" @click="onAddTag()" :disabled="addTag===''">Ajouter</button>
           </div>
         </div>
 
@@ -168,7 +168,8 @@ export default {
             'Histoire',
             'Humour',
             'Informatique et internet',
-            'Jeunesse', 'Littérature',
+            'Jeunesse',
+            'Littérature',
             'Littérature sentimentale',
             'Policier',
             'suspense',
