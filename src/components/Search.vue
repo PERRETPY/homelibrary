@@ -35,10 +35,9 @@
         </div>
       </div>
 
-      <button class="button is-primary" @click="onSearchByKeyword()">Submit</button>
+      <button class="button is-primary" :class="loading ? 'is-loading' : ''" @click="onSearchByKeyword()">Submit</button>
 
       <div v-if="gotSearchResult" class="search-result">
-        <h2>résultat</h2>
         <BookList :booksList="booksList"></BookList>
       </div>
 
@@ -51,6 +50,7 @@ import Scan from "./Scan";
 import {Capacitor} from "@capacitor/core";
 import BookList from "./BookList";
 import {GoogleServer} from "../services/ServerService";
+import ToastService from "../services/toastService";
 
 export default {
   name: "Search",
@@ -65,11 +65,14 @@ export default {
       booksList: [],
       gotSearchResult: false,
       isNativePlatform: Capacitor.isNativePlatform(),
-      serverService: {}
+      serverService: {},
+      toastService: {},
+      loading: false
     }
   },
   mounted() {
     this.serverService = new GoogleServer();
+    this.toastService = ToastService.getInstance();
   },
   methods: {
     onGoClick: function () {
@@ -82,6 +85,9 @@ export default {
       }
     },
     async onSearchByKeyword() {
+      this.loading = true;
+      this.gotSearchResult = false;
+      this.booksList = [];
       this.serverService.getBooksBySearch(this.keywords).then(
           (response) => {
             response.forEach(
@@ -90,7 +96,12 @@ export default {
                   this.booksList.push(book);
               }
             )
-            this.gotSearchResult = true;
+            this.loading = false;
+            if(this.booksList.length > 0) {
+              this.gotSearchResult = true;
+            }else {
+              this.toastService.show('Pas de résultat pour cette recherche', 'is-warning')
+            }
           }
       );
     }
