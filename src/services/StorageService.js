@@ -51,7 +51,7 @@ export class CapacitorStorage {
         });
     }
     async updateBook(isbn, book) {
-        return await Storage.set({
+        return Storage.set({
             key: isbn,
             value: JSON.stringify(book),
         });
