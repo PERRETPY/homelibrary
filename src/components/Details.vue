@@ -139,11 +139,12 @@ export default {
     this.toastService = ToastService.getInstance();
     this.storageService = new CapacitorStorage();
     this.serverService = new GoogleServer();
-    this.storageService.existByISBN(this.id).then((exist) => {
-      this.isInDatabase = exist;
-      this.loadBook();
-      this.getAllOtherTags();
-    });
+    this.storageService.existByISBN(this.id).then(
+        (exist) => {
+          this.isInDatabase = exist;
+          this.loadBook();
+      }
+    );
   },
   methods: {
     onSave: function() {
@@ -298,6 +299,7 @@ export default {
     loadBook: function() {
       if(this.isInDatabase) {
         this.loadBookFromDatabase();
+        this.getAllOtherTags();
       }else {
         this.loadBookFromServer();
       }
