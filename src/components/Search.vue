@@ -95,18 +95,25 @@ export default {
       this.booksList = [];
       this.serverService.getBooksBySearch(this.keywords).then(
           (response) => {
-            response.forEach(
-                (bookResponse) => {
-                  let book = bookResponse.data.volumeInfo;
-                  this.booksList.push(book);
-              }
-            )
+            if(response.length > 0) {
+              response.forEach(
+                  (bookResponse) => {
+                    let book = bookResponse.data.volumeInfo;
+                    this.booksList.push(book);
+                  }
+              )
+            }
             this.loading = false;
             if(this.booksList.length > 0) {
               this.gotSearchResult = true;
             }else {
               this.toastService.show('Pas de résultat pour cette recherche', 'is-warning')
             }
+          }
+        ).catch(
+          () => {
+            this.toastService.show('Pas de résultat pour cette recherche', 'is-warning')
+            this.loading = false;
           }
       );
     }

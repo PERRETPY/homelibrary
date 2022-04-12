@@ -25,13 +25,15 @@ export class GoogleServer {
             .get(this.baseUrl + '?q=' + keywords)
             .then(
                 (response) => {
-                    let requestLink = [];
-                    response.data.items.forEach(
-                        (item) => {
-                            requestLink.push(item.selfLink);
-                        }
-                    )
-                    books = axios.all(requestLink.map((request) => axios.get(request)));
+                    if(response && response.data && response.data.items) {
+                        let requestLink = [];
+                        response.data.items.forEach(
+                            (item) => {
+                                requestLink.push(item.selfLink);
+                            }
+                        )
+                        books = axios.all(requestLink.map((request) => axios.get(request)));
+                    }
                 }
             )
             .catch((error) => {
