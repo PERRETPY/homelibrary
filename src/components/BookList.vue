@@ -4,11 +4,9 @@
     <div class="column is-half-tablet is-one-third-desktop is-one-quarter-widescreen"
          v-for="book in booksList"
          :key="book.isbn">
-      <BookPreview @click="showBooksDetails(book.isbn)" :book="book"></BookPreview>
+      <BookPreview @click="showBooksDetails(book.industryIdentifiers[1].identifier)" :book="book"></BookPreview>
     </div>
   </div>
-
-  <div></div>
 </template>
 
 <script>
@@ -22,6 +20,7 @@ export default {
   },
   methods: {
     showBooksDetails(bookISBN) {
+      console.log(bookISBN);
       this.$router.push({
         name: "Details",
         params: { id: bookISBN },
