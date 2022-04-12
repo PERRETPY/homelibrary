@@ -67,7 +67,7 @@
             <span v-if="book.available">Disponnible</span>
             <span v-else>Indisponnible</span>
           </button>
-          <input v-if="!book.available" class="input" type="text" v-model="book.availableNote" placeholder="Pourquoi ce livre n'est pas disponnible ?">
+          <input v-if="isInDatabase && !book.available" class="input" type="text" v-model="book.availableNote" placeholder="Pourquoi ce livre n'est pas disponnible ?">
         </div>
         <div>
           <button
