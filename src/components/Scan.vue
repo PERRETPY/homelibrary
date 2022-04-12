@@ -22,7 +22,6 @@ export default {
 
       // if the result has content
       if (result.hasContent) {
-        console.log(result.content); // log the raw scanned content
         if (this.checkBarCode(result.content)) {
           await this.$router.replace('/details/'+result.content)
         } else {
