@@ -368,7 +368,10 @@ export default {
             })
           .catch(
               () => {
-                this.toastService.show('Erreur lors de la réccupération', 'is-danger');
+                this.toastService.show('Aucun livre trouvé avec l\'isbn ' + this.id, 'is-danger');
+                this.$router.push({
+                  name: "Search"
+                });
               }
           );
     },
