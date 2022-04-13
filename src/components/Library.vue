@@ -1,5 +1,49 @@
 <template>
   <div class="container">
+
+    <nav class="panel">
+      <p class="panel-heading">
+        Ma bibliothèque
+      </p>
+      <div class="panel-filters">
+        <div class="panel-tabs">
+          <a @click="availableInput=undefined; onSearch()" :class="availableInput === undefined ? 'is-active' : ''">Tous</a>
+          <a @click="availableInput=true; onSearch()" :class="availableInput === true ? 'is-active' : ''">Disponnible</a>
+          <a @click="availableInput=false; onSearch()" :class="availableInput === false ? 'is-active' : ''">Indisponnible</a>
+        </div>
+        <div class="panel-tabs field has-addons">
+          <div class="control has-icons-left" style="width: 100%">
+            <input class="input" type="text" placeholder="Rechercher dans ma bibliothèque" v-model="searchInput">
+            <span class="icon is-left">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </span>
+          </div>
+          <div class="control">
+            <a class="button is-info" @click="onSearch()">
+              Search
+            </a>
+          </div>
+        </div>
+        <div class="panel-tabs">
+          <a @click="readInput=undefined; onSearch()" :class="readInput === undefined ? 'is-active' : ''">Tous</a>
+          <a @click="readInput=true; onSearch()" :class="readInput === true ? 'is-active' : ''">Lu</a>
+          <a @click="readInput=false; onSearch()" :class="readInput === false ? 'is-active' : ''">Non Lu</a>
+        </div>
+        <div v-if="allTags && allTags.length > 0" class="tag-filter">
+          <label>Filtrer par tags </label>
+          <select v-model="searchTag" @change="onSearch()">
+            <option selected value="all"> Tous </option>
+            <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel-elements">
+        <BookList :booksList="booksList"></BookList>
+      </div>
+    </nav>
+<!--
+
     <div class="field has-addons">
       <div class="control">
         <input class="input" type="search" placeholder="Search by keyWord" v-model="searchInput">
@@ -49,7 +93,7 @@
         <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
       </select>
     </div>
-    <BookList :booksList="booksList"></BookList>
+    -->
   </div>
 </template>
 
@@ -112,6 +156,7 @@ export default {
     },
 
     onSearch: function() {
+      console.log('onSearch');
       const searchKeyWord = this.searchInput;
       const tag = this.searchTag;
       const available = this.availableInput;
@@ -131,5 +176,21 @@ export default {
 </script>
 
 <style scoped>
-
+  .tag-filter {
+    margin-top: 1em;
+    margin-bottom: .5em;
+  }
+  .panel-heading{
+    margin-bottom: .5em;
+  }
+  .panel {
+    min-height: 85vh;
+  }
+  .panel-elements {
+    padding: 1em;
+  }
+  .panel-filters {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
 </style>
