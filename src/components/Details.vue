@@ -341,13 +341,13 @@ export default {
     loadBook: function() {
       if(this.isInDatabase) {
         this.loadBookFromDatabase();
-        this.getAllOtherTags();
       }else {
         this.loadBookFromServer();
       }
     },
 
     loadBookFromDatabase: function () {
+      this.getAllOtherTags();
       this.storageService.getBookByISBN(this.id).then(
           (book) => {
             this.book = book;
