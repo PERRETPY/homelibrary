@@ -6,7 +6,6 @@
         <Scan @returnScanMessage="messageFromScanChild"></Scan>
       </div>
       <div v-else>
-        <button v-if="isNativePlatform" class="button is-primary" @click="manualSearch=false">Scan</button>
         <h5 class="title is-5">Rechercher un livre</h5>
         <form @submit.prevent="onGoClick()">
           <div class="field has-addons">
@@ -23,6 +22,14 @@
             </div>
           </div>
         </form>
+
+        <div class="scan-button-group">
+          <h6 class="title is-6">OU</h6>
+          <button class="button is-primary scan-button" @click="manualSearch=false">
+            <i class="fa fa-barcode fa-5x scan-icon" aria-hidden="true"></i>
+            Scanner un livre
+          </button>
+        </div>
 
         <div v-if="gotSearchResult" class="search-result">
           <BookList :booksList="booksList"></BookList>
@@ -133,5 +140,16 @@ export default {
   }
   .search-result {
     margin-top: 2em;
+  }
+  .scan-button-group {
+    margin-top: 24px;
+    text-align: center;
+  }
+  .scan-button {
+    padding: .4em;
+    height: 100%;
+  }
+  .scan-icon {
+    margin: .2em;
   }
 </style>
