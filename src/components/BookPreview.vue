@@ -1,6 +1,13 @@
 <template>
   <div class="card">
-    <div class="card-content">
+    <header class="card-header">
+      <p class="card-header-title">
+        <i class="fa fa-book" aria-hidden="true" :style="book.read ? '' : 'color: rgba(218, 0, 0, 0.5)'"></i>
+        <span v-if="book.read">Lu</span>
+        <span v-else>Non lu</span>
+      </p>
+    </header>
+    <div class="card-content" :style="book.available ? 'background-color: rgba(0, 218, 0, 0.11)' : 'background-color: rgba(218, 0, 0, 0.11)'">
       <div class="media">
         <div class="media-content">
           <p class="title is-4">{{ book.title }}</p>
@@ -11,9 +18,6 @@
             <span class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
               {{ tag }}
             </span>
-        <br>
-        <br>
-        <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
       </div>
     </div>
   </div>
@@ -29,7 +33,16 @@ export default {
 </script>
 
 <style scoped>
-.tag {
-  margin-right: .8em;
-}
+  .tag {
+    margin-right: .8em;
+  }
+  .card-header {
+    background-color: rgba(185, 185, 185, 0.11);
+  }
+  .card-content {
+
+  }
+  .fa-book {
+    margin-right: 1em;
+  }
 </style>
