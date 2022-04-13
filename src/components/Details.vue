@@ -380,7 +380,7 @@ export default {
     async share() {
       let text = 'J\'ai ajouté ' + this.book.title + ' dans l\'application HomeLibrary';
       if(this.book.selfRate) {
-        text = text.concat('et je lui ai mis la note de ' + this.book.selfRate + '/5');
+        text = text.concat(' et je lui ai mis la note de ' + this.book.selfRate + '/5');
       }
       await Share.share({
         title: 'HomeLibrary',
