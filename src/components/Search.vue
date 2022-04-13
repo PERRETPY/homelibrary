@@ -18,14 +18,14 @@
                   placeholder="ISBN ou mots clés">
             </div>
             <div class="control">
-              <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="query.trim()===''">Rechercher</button>
+              <button class="button button-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="query.trim()===''">Rechercher</button>
             </div>
           </div>
         </form>
 
         <div class="scan-button-group" v-if="isNativePlatform">
           <h6 class="title is-6">OU</h6>
-          <button class="button is-primary scan-button" @click="manualSearch=false">
+          <button class="button button-primary scan-button" @click="manualSearch=false">
             <i class="fa fa-barcode fa-5x scan-icon" aria-hidden="true"></i>
             Scanner un livre
           </button>
@@ -151,5 +151,9 @@ export default {
   }
   .scan-icon {
     margin: .2em;
+  }
+  .button-primary {
+    background-color: #A29C43;
+    color: white;
   }
 </style>

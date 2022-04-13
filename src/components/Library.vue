@@ -19,9 +19,9 @@
           </span>
           </div>
           <div class="control">
-            <a class="button is-info" @click="onSearch()">
+            <butoon class="button button-primary" @click="onSearch()">
               Search
-            </a>
+            </butoon>
           </div>
         </div>
         <div class="panel-tabs">
@@ -140,5 +140,12 @@ export default {
   .panel-filters {
     padding-left: 1em;
     padding-right: 1em;
+  }
+  .panel-tabs, a {
+    color: #A29C43;
+  }
+  .button-primary {
+    background-color: #A29C43;
+    color: white;
   }
 </style>
