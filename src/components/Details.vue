@@ -1,55 +1,110 @@
 <template>
   <div class="container" v-if="!loading">
-    <div class="columns">
-      <div class="column is-half-tablet" v-if="book">
-        <div v-if="isInDatabase">
-          <img v-if="book.imageLink" class="book-cover" v-bind:src="book.imageLink" alt="">
-          <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
-        </div>
-        <div v-else>
-          <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
-          <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
-        </div>
-      </div>
-      <div class="column is-half-tablet details" v-if="book">
-        <h2 class="title is-2">{{ book.title }}</h2>
-        <h5 class="title is-5" v-if="book.authors">{{ book.authors.join(', ') }}</h5>
-        <h5 class="title is-5">Date de parution : {{ book.publishedDate }}</h5>
-        <div v-if="isInDatabase && book.tags">
-          <span class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
-          {{ tag }}
-          <button class="delete is-small" @click="onDeleteTag(book.tags.indexOf(tag))"></button>
-        </span>
-          <div>
-            <input class="input" type="text" placeholder="tag" list="tagList" v-model="addTag">
-            <datalist id="tagList">
-              <option v-for="tag in allOtherTags" :key="tag">{{tag}}</option>
-            </datalist>
-
-            <button class="button" @click="onAddTag()" :disabled="addTag===''">Ajouter</button>
+    <div style="margin: 1em">
+      <div class="columns">
+        <div class="column is-half-tablet" v-if="book">
+          <div v-if="isInDatabase">
+            <img v-if="book.imageLink" class="book-cover" v-bind:src="book.imageLink" alt="">
+            <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
+          </div>
+          <div v-else>
+            <img v-if="book.imageLinks" class="book-cover" v-bind:src="book.imageLinks.thumbnail" alt="">
+            <img v-else class="book-cover" src="../assets/book_cover_placeholder.png" alt="">
           </div>
         </div>
+        <div class="column is-half-tablet details" v-if="book">
+          <div class="card">
+            <div class="card-content">
+              <div class="media">
+                <div class="media-content">
+                  <h2 class="title is-2">{{ book.title }}</h2>
+                  <h5 class="title is-5" v-if="book.authors">{{ book.authors.join(', ') }}</h5>
+                  <h5 class="title is-5">Date de parution : {{ book.publishedDate }}</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="isInDatabase && book.tags" class="tags">
+            <div class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
+              {{ tag }}
+              <button class="delete is-small" @click="onDeleteTag(book.tags.indexOf(tag))"></button>
+            </div>
+            <div class="field has-addons">
+              <div class="control">
+                <input class="input" type="text" placeholder="tag" list="tagList" v-model="addTag">
+                <datalist id="tagList">
+                  <option v-for="tag in allOtherTags" :key="tag">{{tag}}</option>
+                </datalist>
+              </div>
+              <div class="control">
+                <button class="button is-info" @click="onAddTag()" :disabled="addTag===''">
+                  Ajouter
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="available-button">
+            <button
+                v-if="isInDatabase"
+                class="button is-rounded"
+                :class="{ 'is-primary': book.available, 'is-danger': !book.available }"
+                @click="onAvailableClick()">
+              <span v-if="book.available">Disponnible</span>
+              <span v-else>Indisponnible</span>
+            </button>
 
-        <h6 class="title is-6">Description</h6>
-        <p class="description" v-if="book.description" v-html="book.description"/>
-        <p v-else> pas de description pour le moment</p>
 
+            <div class="field has-addons" v-if="isInDatabase">
+              <div class="control is-expanded">
+                <input class="input available-input" type="text" v-model="book.availableNote" placeholder="Pourquoi ce livre n'est pas disponnible ?" :disabled="book.available">
+              </div>
+              <div class="control">
+                <button class="button is-primary" @click="onSave" :disabled="book.available">
+                  Sauvegarder
+                </button>
+              </div>
+            </div>
 
-        <star-rating v-if="isInDatabase" v-model:rating="book.selfRate" :increment="0.5"/>
+          </div>
+          <div>
+            <button
+                v-if="isInDatabase"
+                class="button is-rounded"
+                :class="{ 'is-primary': book.read, 'is-danger': !book.read }"
+                @click="onReadClick()">
+              <span v-if="book.read">Lu</span>
+              <span v-else>Non lu</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+
+        <div class="description-block">
+          <h6 class="title is-6">Description : </h6>
+          <p class="description" v-if="book.description" v-html="book.description"/>
+          <p v-else> pas de description pour le moment</p>
+        </div>
+
+        <div v-if="book.read">
+          <h6 v-if="book.selfRate === undefined"><b>Evaluez-moi !</b></h6>
+          <star-rating v-if="isInDatabase" v-model:rating="book.selfRate" :increment="0.5"/>
+        </div>
         <div v-if="book">
           <div v-if="book.ratingsCount && book.ratingsCount > 0">
             <p>{{ book.ratingsCount }} avis </p>
             <star-rating v-model:rating="book.averageRating" :star-size="20" :round-start-rating="false" :read-only="true"></star-rating>
           </div>
           <div v-else>
-            <p><i>pas d'avis pour le moment </i></p>
+            <p><i>Pas d'autres avis pour le moment </i></p>
             <star-rating v-model:rating="book.averageRating" :star-size="20" :round-start-rating="false" :read-only="true"></star-rating>
           </div>
         </div>
 
 
         <div class="field" v-if="isInDatabase">
-          <label class="label">Avis</label>
+          <label class="label">Mon avis</label>
           <div class="field-body">
             <div class="field">
               <div class="control">
@@ -58,37 +113,31 @@
             </div>
           </div>
         </div>
-        <div>
-          <button
-              v-if="isInDatabase"
-              class="button is-rounded"
-              :class="{ 'is-primary': book.available, 'is-danger': !book.available }"
-              @click="onAvailableClick()">
-            <span v-if="book.available">Disponnible</span>
-            <span v-else>Indisponnible</span>
-          </button>
-          <input v-if="isInDatabase && !book.available" class="input" type="text" v-model="book.availableNote" placeholder="Pourquoi ce livre n'est pas disponnible ?">
+
+
+        <div class="field" v-if="isInDatabase">
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <button @click="onSave()" class="button is-primary">
+                  <span>Sauvegarder mon avis</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <button
-              v-if="isInDatabase"
-              class="button is-rounded"
-              :class="{ 'is-primary': book.read, 'is-danger': !book.read }"
-              @click="onReadClick()">
-            <span v-if="book.read">Lu</span>
-            <span v-else>Non lu</span>
-          </button>
-        </div>
-        <div class="field ">
+
+
+
+        <div class="field">
           <div class="field-body">
             <div class="field">
               <div class="control">
                 <button v-if="isInDatabase" @click="onDelete()" class="button is-danger">
-                  Supprimer
+                  Supprimer de ma bibliothèque
                 </button>
-                <button @click="onSave()" class="button is-primary">
-                  <span v-if="isInDatabase">Sauvegarder</span>
-                  <span v-else>Ajouter</span>
+                <button @click="onSave()" class="button is-primary" v-if="!isInDatabase">
+                  <span >Ajouter</span>
                 </button>
                 <button v-if="isNativePlatform && isInDatabase" @click="share()" class="button is-primary">
                   Partager
@@ -98,8 +147,11 @@
           </div>
         </div>
       </div>
+
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -331,10 +383,12 @@ export default {
     },
 
     onAvailableClick: function() {
+      this.book.availableNote = undefined;
       this.book.available = !this.book.available;
     },
 
     onReadClick: function() {
+      this.book.selfRate = undefined;
       this.book.read = !this.book.read;
     },
 
@@ -394,9 +448,9 @@ export default {
 </script>
 
 <style scoped>
-  .container {
-    margin-top: 3em;
-  }
+.container {
+  margin-top: 1em;
+}
   .book-cover {
     height: 100%;
     max-height: 30em;
@@ -421,5 +475,22 @@ export default {
   img {
     width: 100%;
     object-fit: contain;
+  }
+  .card {
+    margin-bottom: 2em;
+  }
+  .tags {
+    margin-bottom: 1em;
+    display: block;
+  }
+  .description-block {
+    margin-bottom: 1em;
+  }
+  .available-button {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+  .available-button button {
+    margin-bottom: 1em;
   }
 </style>
