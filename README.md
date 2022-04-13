@@ -15,10 +15,8 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
+### Refresh android files
 ```
-npm run lint
+npm run android
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
