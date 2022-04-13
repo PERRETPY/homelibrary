@@ -78,8 +78,16 @@ export default {
   margin: 0;
 }
 
+.navbar-link:not(.is-arrowless)::after {
+  border-color: #A29C43;
+}
+
 .navbar-item:hover {
   color: #A29C43;
+}
+
+.navbar-item:focus {
+  color: black;
 }
 
 .navbar-link:hover {
