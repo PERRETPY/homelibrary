@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="content">
-            <span class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
+            <span class="tag" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
               {{ tag }}
             </span>
       </div>
@@ -35,6 +35,8 @@ export default {
 <style scoped>
   .tag {
     margin-right: .8em;
+    background-color: #A29C43;
+    color: white;
   }
   .card-header {
     background-color: rgba(185, 185, 185, 0.11);
