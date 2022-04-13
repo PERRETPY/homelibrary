@@ -89,7 +89,7 @@
 
         <div v-if="book.read">
           <h6 v-if="book.selfRate === undefined"><b>Evaluez-moi !</b></h6>
-          <star-rating v-if="isInDatabase" v-model:rating="book.selfRate" :increment="0.5"/>
+          <star-rating v-if="isInDatabase" v-model:rating="book.selfRate" :increment="0.5" @update:rating="onSave"/>
         </div>
         <div v-if="book">
           <div v-if="book.ratingsCount && book.ratingsCount > 0">
@@ -373,23 +373,27 @@ export default {
 
     onDeleteTag: function(key) {
       this.book.tags.splice(key, 1);
+      this.onSave();
       this.getAllOtherTags();
     },
 
     onAddTag: function() {
       this.book.tags.push(this.addTag);
       this.addTag = "";
+      this.onSave();
       this.getAllOtherTags();
     },
 
     onAvailableClick: function() {
       this.book.availableNote = undefined;
       this.book.available = !this.book.available;
+      this.onSave();
     },
 
     onReadClick: function() {
       this.book.selfRate = undefined;
       this.book.read = !this.book.read;
+      this.onSave();
     },
 
     loadBook: function() {
