@@ -1,52 +1,58 @@
 <template>
   <div class="container">
-    <div v-if="isNativePlatform && !manualSearch" class="scanbox">
-      <Scan @returnScanMessage="messageFromScanChild"></Scan>
-    </div>
-    <div v-else>
-      <button class="button is-primary" @click="manualSearch=false">Scan</button>
-      <form @submit.prevent="onGoClick()">
-        <div class="field">
-          <label class="label">Rechercher un livre</label>
-          <div class="control">
-            <input
-                class="input"
-                v-bind:class="{ 'is-danger': !validForm }"
-                v-model="isbn"
-                type="text"
-                placeholder="ISBN">
-          </div>
-          <p v-if="!validForm" class="help is-danger">This ISBN is not correct</p>
-        </div>
 
-        <button class="button is-primary" type="submit" :disabled="!correctIsbn()">Submit</button>
-      </form>
-
-
-
-
-      <form @submit.prevent="goToSearchPage()">
-        <div class="field">
-          <label class="label">Rechercher un livre</label>
-          <div class="control">
-            <input
-                class="input"
-                v-bind:class="{ 'is-danger': !validForm }"
-                v-model="keywords"
-                type="text"
-                placeholder="Recherche par mots clés">
-          </div>
-        </div>
-
-        <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="keywords.trim()===''">Submit</button>
-      </form>
-
-
-      <div v-if="gotSearchResult" class="search-result">
-        <BookList :booksList="booksList"></BookList>
+    <div class="content-page">
+      <div v-if="isNativePlatform && !manualSearch" class="scanbox">
+        <Scan @returnScanMessage="messageFromScanChild"></Scan>
       </div>
+      <div v-else>
+        <button v-if="isNativePlatform" class="button is-primary" @click="manualSearch=false">Scan</button>
+        <form @submit.prevent="onGoClick()">
+          <div class="field">
+            <label class="label">Rechercher un livre</label>
+            <div class="control">
+              <input
+                  class="input"
+                  v-bind:class="{ 'is-danger': !validForm }"
+                  v-model="isbn"
+                  type="text"
+                  placeholder="ISBN">
+            </div>
+            <p v-if="!validForm" class="help is-danger">This ISBN is not correct</p>
+          </div>
 
+          <button class="button is-primary" type="submit" :disabled="!correctIsbn()">Submit</button>
+        </form>
+
+
+
+
+        <form @submit.prevent="goToSearchPage()">
+          <div class="field">
+            <label class="label">Rechercher un livre</label>
+            <div class="control">
+              <input
+                  class="input"
+                  v-bind:class="{ 'is-danger': !validForm }"
+                  v-model="keywords"
+                  type="text"
+                  placeholder="Recherche par mots clés">
+            </div>
+          </div>
+
+          <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="keywords.trim()===''">Submit</button>
+        </form>
+
+
+        <div v-if="gotSearchResult" class="search-result">
+          <BookList :booksList="booksList"></BookList>
+        </div>
+
+      </div>
     </div>
+
+
+
   </div>
 </template>
 
@@ -146,5 +152,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .content-page {
+    margin: 1em;
+  }
 </style>
