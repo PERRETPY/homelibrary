@@ -8,8 +8,8 @@
       <div class="panel-filters">
         <div class="panel-tabs">
           <a @click="availableInput=undefined; onSearch()" :class="availableInput === undefined ? 'is-active' : ''">Tous</a>
-          <a @click="availableInput=true; onSearch()" :class="availableInput === true ? 'is-active' : ''">Disponnible</a>
-          <a @click="availableInput=false; onSearch()" :class="availableInput === false ? 'is-active' : ''">Indisponnible</a>
+          <a @click="availableInput=true; onSearch()" :class="availableInput === true ? 'is-active' : ''">Disponible</a>
+          <a @click="availableInput=false; onSearch()" :class="availableInput === false ? 'is-active' : ''">Indisponible</a>
         </div>
         <div class="panel-tabs field has-addons">
           <div class="control has-icons-left" style="width: 100%">
