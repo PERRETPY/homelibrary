@@ -7,42 +7,22 @@
       </div>
       <div v-else>
         <button v-if="isNativePlatform" class="button is-primary" @click="manualSearch=false">Scan</button>
+        <h5 class="title is-5">Rechercher un livre</h5>
         <form @submit.prevent="onGoClick()">
-          <div class="field">
-            <label class="label">Rechercher un livre</label>
-            <div class="control">
+          <div class="field has-addons">
+            <div class="control is-expanded">
               <input
-                  class="input"
+                  class="input available-input"
                   v-bind:class="{ 'is-danger': !validForm }"
-                  v-model="isbn"
+                  v-model="query"
                   type="text"
-                  placeholder="ISBN">
+                  placeholder="ISBN ou mots clés">
             </div>
-            <p v-if="!validForm" class="help is-danger">This ISBN is not correct</p>
-          </div>
-
-          <button class="button is-primary" type="submit" :disabled="!correctIsbn()">Submit</button>
-        </form>
-
-
-
-
-        <form @submit.prevent="goToSearchPage()">
-          <div class="field">
-            <label class="label">Rechercher un livre</label>
             <div class="control">
-              <input
-                  class="input"
-                  v-bind:class="{ 'is-danger': !validForm }"
-                  v-model="keywords"
-                  type="text"
-                  placeholder="Recherche par mots clés">
+              <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="query.trim()===''">Rechercher</button>
             </div>
           </div>
-
-          <button class="button is-primary" :class="loading ? 'is-loading' : ''" type="submit" :disabled="keywords.trim()===''">Submit</button>
         </form>
-
 
         <div v-if="gotSearchResult" class="search-result">
           <BookList :booksList="booksList"></BookList>
@@ -75,7 +55,7 @@ export default {
     return {
       isbn: null,
       validForm: true,
-      keywords: '',
+      query: '',
       booksList: [],
       gotSearchResult: false,
       isNativePlatform: Capacitor.isNativePlatform(),
@@ -89,29 +69,25 @@ export default {
     this.serverService = new GoogleServer();
     this.toastService = ToastService.getInstance();
     if(this.q) {
-      this.keywords = this.q;
+      this.query = this.q;
       this.onSearchByKeyword();
     }
   },
   methods: {
     onGoClick: function () {
       const regex = /97[89][0-9]{10}/
-      if ( regex.test(this.isbn) ) {
+      if ( regex.test(this.query) ) {
         this.validForm = true;
-        this.$router.replace({ path: '/details/'+this.isbn })
+        this.$router.replace({ path: '/details/'+this.query })
       } else {
-        this.validForm = false;
+        this.goToSearchPage();
       }
-    },
-    correctIsbn: function() {
-      const regex = /97[89][0-9]{10}/
-      return regex.test(this.isbn);
     },
     async onSearchByKeyword() {
       this.loading = true;
       this.gotSearchResult = false;
       this.booksList = [];
-      this.serverService.getBooksBySearch(this.keywords).then(
+      this.serverService.getBooksBySearch(this.query).then(
           (response) => {
             if(response.length > 0) {
               response.forEach(
@@ -138,7 +114,7 @@ export default {
     goToSearchPage: function() {
       this.$router.replace({
         name: "SearchQ",
-        params: { q: this.keywords.trim() },
+        params: { q: this.query.trim() },
       });
       this.onSearchByKeyword();
     },
@@ -154,5 +130,8 @@ export default {
 <style scoped>
   .content-page {
     margin: 1em;
+  }
+  .search-result {
+    margin-top: 2em;
   }
 </style>
