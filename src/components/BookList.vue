@@ -4,7 +4,7 @@
     <div class="column is-half-tablet is-one-third-desktop is-one-quarter-widescreen"
          v-for="book in booksList"
          :key="book.isbn">
-      <BookPreview @click='showBooksDetails(book)' :book="book"></BookPreview>
+      <BookPreview class='pointer' @click='showBooksDetails(book)' :book="book"></BookPreview>
     </div>
   </div>
 </template>
@@ -54,5 +54,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .pointer {
+    cursor: pointer;
+  }
 </style>
