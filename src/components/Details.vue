@@ -25,7 +25,7 @@
             </div>
           </div>
           <div v-if="isInDatabase && book.tags" class="tags">
-            <div class="tag is-info" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
+            <div class="tag button-primary" v-for="tag in book.tags" :key="book.tags.indexOf(tag)">
               {{ tag }}
               <button class="delete is-small" @click="onDeleteTag(book.tags.indexOf(tag))"></button>
             </div>
@@ -37,7 +37,7 @@
                 </datalist>
               </div>
               <div class="control">
-                <button class="button is-info" @click="onAddTag()" :disabled="addTag===''">
+                <button class="button button-primary" @click="onAddTag()" :disabled="addTag===''">
                   Ajouter
                 </button>
               </div>
@@ -47,7 +47,7 @@
             <button
                 v-if="isInDatabase"
                 class="button is-rounded"
-                :class="{ 'is-primary': book.available, 'is-danger': !book.available }"
+                :class="{ 'is-success': book.available, 'is-danger': !book.available }"
                 @click="onAvailableClick()">
               <span v-if="book.available">Disponnible</span>
               <span v-else>Indisponnible</span>
@@ -59,7 +59,7 @@
                 <input class="input available-input" type="text" v-model="book.availableNote" placeholder="Pourquoi ce livre n'est pas disponnible ?" :disabled="book.available">
               </div>
               <div class="control">
-                <button class="button is-primary" @click="onSave" :disabled="book.available">
+                <button class="button button-primary" @click="onSave" :disabled="book.available">
                   Sauvegarder
                 </button>
               </div>
@@ -70,7 +70,7 @@
             <button
                 v-if="isInDatabase"
                 class="button is-rounded"
-                :class="{ 'is-primary': book.read, 'is-danger': !book.read }"
+                :class="{ 'is-success': book.read, 'is-danger': !book.read }"
                 @click="onReadClick()">
               <span v-if="book.read">Lu</span>
               <span v-else>Non lu</span>
@@ -119,7 +119,7 @@
           <div class="field-body">
             <div class="field">
               <div class="control">
-                <button @click="onSave()" class="button is-primary">
+                <button @click="onSave()" class="button button-primary">
                   <span>Sauvegarder mon avis</span>
                 </button>
               </div>
@@ -136,10 +136,10 @@
                 <button v-if="isInDatabase" @click="onDelete()" class="button is-danger">
                   Supprimer de ma bibliothèque
                 </button>
-                <button @click="onSave()" class="button is-primary" v-if="!isInDatabase">
+                <button @click="onSave()" class="button button-primary" v-if="!isInDatabase">
                   <span >Ajouter</span>
                 </button>
-                <button v-if="isNativePlatform && isInDatabase" @click="share()" class="button is-primary">
+                <button v-if="isNativePlatform && isInDatabase" @click="share()" class="button button-primary">
                   Partager
                 </button>
               </div>
@@ -496,5 +496,9 @@ export default {
   }
   .available-button button {
     margin-bottom: 1em;
+  }
+  .button-primary {
+    background-color: #A29C43;
+    color: white;
   }
 </style>
