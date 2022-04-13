@@ -31,7 +31,7 @@
         </div>
         <div v-if="allTags && allTags.length > 0" class="tag-filter">
           <label>Filtrer par tags </label>
-          <select v-model="searchTag" @change="onSearch()">
+          <select v-model="searchTag" @change="onSearch()" >
             <option selected value="all"> Tous </option>
             <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
           </select>
@@ -42,58 +42,6 @@
         <BookList :booksList="booksList"></BookList>
       </div>
     </nav>
-<!--
-
-    <div class="field has-addons">
-      <div class="control">
-        <input class="input" type="search" placeholder="Search by keyWord" v-model="searchInput">
-
-      </div>
-      <div class="control">
-        <a class="button is-info" @click="onSearch()">
-          Search
-        </a>
-      </div>
-    </div>
-
-    <div class="control">
-      <label class="radio">
-        <input type="radio" name="read" v-model="readInput" :value="false" @change="onSearch()">
-        Non lu
-      </label>
-      <label class="radio">
-        <input type="radio" name="read" v-model="readInput" :value="undefined" @change="onSearch()" checked>
-        Tous
-      </label>
-      <label class="radio">
-        <input type="radio" name="read"  v-model="readInput" :value="true" @change="onSearch()">
-        Lu
-      </label>
-    </div>
-
-    <div class="control">
-      <label class="radio">
-        <input type="radio" name="available" v-model="availableInput" :value="false" @change="onSearch()">
-        Indisponible
-      </label>
-      <label class="radio">
-        <input type="radio" name="available" v-model="availableInput" :value="undefined" @change="onSearch()" checked>
-        Tous
-      </label>
-      <label class="radio">
-        <input type="radio" name="available"  v-model="availableInput" :value="true" @change="onSearch()">
-        Disponnible
-      </label>
-    </div>
-
-    <div v-if="allTags && allTags.length > 0">
-      <label>Search by tag</label>
-      <select v-model="searchTag" @change="onSearch()">
-        <option selected value="all"> Tous </option>
-        <option v-for="tag in allTags" :key="tag" :value="tag">{{ tag }}</option>
-      </select>
-    </div>
-    -->
   </div>
 </template>
 
