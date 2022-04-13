@@ -1,6 +1,7 @@
 <template>
   <div class="header">
     <h2>Scannez le code barre d'un livre !</h2>
+    <button class="button is-primary" @click="onManualSearch()">Recherche manuel</button>
   </div>
   <div></div>
 </template>
@@ -36,6 +37,9 @@ export default {
     checkBarCode(barcode) {
       const regex = /97[89][0-9]{10}/
       return regex.test(barcode)
+    },
+    onManualSearch: function() {
+      this.$emit('returnScanMessage', 'manualSearch');
     }
   },
   mounted() {

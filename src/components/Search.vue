@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <div v-if="isNativePlatform" class="scanbox">
-      <Scan></Scan>
+    <div v-if="isNativePlatform && !manualSearch" class="scanbox">
+      <Scan @returnScanMessage="messageFromScanChild"></Scan>
     </div>
     <div v-else>
-
+      <button class="button is-primary" @click="manualSearch=false">Scan</button>
       <form @submit.prevent="onGoClick()">
         <div class="field">
           <label class="label">Rechercher un livre</label>
@@ -75,7 +75,8 @@ export default {
       isNativePlatform: Capacitor.isNativePlatform(),
       serverService: {},
       toastService: {},
-      loading: false
+      loading: false,
+      manualSearch: false
     }
   },
   mounted() {
@@ -134,6 +135,11 @@ export default {
         params: { q: this.keywords.trim() },
       });
       this.onSearchByKeyword();
+    },
+    messageFromScanChild: function(searchType) {
+      if(searchType === 'manualSearch') {
+        this.manualSearch = true;
+      }
     }
   }
 }
