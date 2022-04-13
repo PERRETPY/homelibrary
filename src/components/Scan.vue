@@ -39,7 +39,13 @@ export default {
     }
   },
   mounted() {
-    this.startScan();
+    BarcodeScanner.checkPermission({ force: true }).then(
+        (permission) => {
+          if(permission.granted){
+            this.startScan();
+          }
+        }
+    )
   },
   deactivated() {
     this.stopScan();
