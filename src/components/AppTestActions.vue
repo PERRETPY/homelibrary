@@ -1,7 +1,10 @@
 <template>
   <div class="container">
+    <p>Cette page permet de gérer la base de données directement afin de faciliter le test de l'application.</p>
+    <p>Elle n'apparaitra pas dans une version finale de l'application.</p>
+    <p>Le bouton "Charger des livres" permet d'ajouter un certains nombre de livre à la library automatiquement à partir du fichier .json se trouvant dans le dossier assets.</p>
     <button class="button is-danger" @click="resetDatabase()">Reset database</button>
-    <button class="button is-info" @click="loadPresetBookList()">loadPresetBookList</button>
+    <button class="button is-info" @click="loadPresetBookList()">Charger des livres</button>
     <table class="table is-fullwidth is-hoverable">
       <thead>
         <tr>
