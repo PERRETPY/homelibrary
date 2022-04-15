@@ -4,9 +4,9 @@
       <img src="../assets/bigLogo.png" alt="">
     </div>
     <div>
-      <button class="home-button button" to="/search">
+      <router-link class="home-button button" to="/search">
         Commencer
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
