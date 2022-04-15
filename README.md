@@ -3,8 +3,7 @@
 ## Rendus demandés
 
 Le fichier Rapport.pdf est mon compte rendu de ce projet.
-Un APK buildé est fourni et installable, il se trouve dans le dossier : 
-android/app/build/outputs/apk/debug/app-debug.apk
+Un APK buildé est fourni et installable, il se trouve à la racine du projet.
 
 ## Project setup
 ```
